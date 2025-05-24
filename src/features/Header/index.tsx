@@ -11,7 +11,7 @@ const Header = () => {
   };
 
   // 로고
-  const logoObj = 'LOGO';
+  const logoObj = 'Moodify';
   const clickLogo = () => {
     router.push('/');
   };
@@ -32,8 +32,8 @@ const Header = () => {
           <Button onClick={() => clickDevelopAlert()}>메뉴3</Button>
         </div>
         <div className="headerAuthBar">
-          <Button onClick={() => clickDevelopAlert()}>로그인</Button>
-          <Button onClick={() => clickDevelopAlert()}>회원가입</Button>
+          <Button onClick={() => router.push('/login')}>로그인</Button>
+          <Button onClick={() => router.push('/signup')}>회원가입</Button>
         </div>
       </div>
     </HeaderStyled>

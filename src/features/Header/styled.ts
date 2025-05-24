@@ -2,14 +2,19 @@ import styled from 'styled-components';
 
 export const HeaderStyled = styled.div`
   .headerWrap {
-    border: 1px solid black;
-    border-radius: 0px 0px 20px 20px;
-    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.04);
+    padding: 0 30px;
+    height: 70px;
+    /* margin-bottom: 20px; */
     display: flex;
     justify-content: space-between;
+    align-items: center;
     .headerLogo {
       cursor: pointer;
       font-weight: bolder;
+      font-size: 20px;
+      color: #4A90E2;
+      transition: color 0.5s ease;
     }
     .headerLogo:hover {
       color: #53d9ae;
