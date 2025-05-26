@@ -2,8 +2,8 @@ import { useRouter } from 'next/router';
 import { HeaderStyled } from './styled';
 import { Button } from 'antd';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, store } from '@/redux/store';
 import { logOut } from '@/redux/slices/userSlices';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
@@ -31,6 +31,7 @@ const Header = () => {
     } else {
       setLoginUser(false);
     }
+
   }, [cookie]);
 
   // 로그아웃
@@ -41,8 +42,12 @@ const Header = () => {
     router.push('/');
   };
 
+  const name = store.getState().user.userInfo?.userName
   const loginStatus = loginUser ? (
-    <Button onClick={handleLogout}>로그아웃</Button>
+    <>
+      <div className='headerUserName'>{name}님</div>
+      <Button onClick={handleLogout}>로그아웃</Button>
+    </>
   ) : (
     <>
       <Button onClick={() => router.push('/login')}>로그인</Button>
