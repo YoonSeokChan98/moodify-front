@@ -15,7 +15,6 @@ export const SignupStyled = styled.div`
     max-width: 400px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
     .signupTextBox {
       .signupTitleText {
         font-size: 30px;
@@ -30,13 +29,20 @@ export const SignupStyled = styled.div`
       color: red;
       margin-left: 5px;
     }
-    #userName {
+    .signupUsername {
+      margin: 10px 0;
     }
-    #userEmail {
+    .signupUserEmail {
+      margin: 10px 0;
     }
-    #userPassword {
+    .signupUserAuthNumber {
+      margin: 10px 0;
     }
-    #userPasswordConfirm {
+    .signupUserPassword {
+      margin: 10px 0;
+    }
+    .signupUserPasswordConfirm {
+      margin: 10px 0;
     }
   }
 `;

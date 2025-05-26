@@ -1,4 +1,4 @@
-// 회원가입 검증 타입
+// 회원가입 / 로그인 검증
 export interface ValidateType {
   userEmail?: string;
   // userPassword?: string;
@@ -16,4 +16,16 @@ export interface SignupType {
 export interface LoginType {
   userEmail: string;
   userPassword: string;
+}
+
+// 회원정보 redux
+export interface UserStateType {
+  isLoggedIn: boolean;
+  userInfo: {
+    userId: Number;
+    userName: string;
+    userEmail: string;
+    userRole: string;
+    userToken: string;
+  } | null;
 }

@@ -1,24 +1,30 @@
 import { useFormik } from 'formik';
 import { SignupStyled } from './styled';
 import { useRouter } from 'next/router';
-import { Button, Input, Spin } from 'antd';
+import { Alert, Button, Input, Spin } from 'antd';
 import Password from 'antd/es/input/Password';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { sendAuthNumberEmail } from '@/pages/api/nodemailerApi';
-import { postSignup } from '@/pages/api/userApi';
+import { apiSendAuthNumberEmail } from '@/pages/api/nodemailerApi';
+import { apiPostSignup } from '@/pages/api/userApi';
 import { ValidateType } from '@/types';
+import { toast } from 'react-toastify';
 
 const Signup = () => {
   const router = useRouter();
   // 로딩 상태
   const [isLoading, setIsLoading] = useState(false);
   // 이메일 인증 번호 저장
-  const [authNumber, setAuthNumber] = useState<string>('');
+  const [authNumber, setAuthNumber] = useState<number>(0);
   // 이메일 인증 번호 발송 여부
   const [isAuthNumber, setIsAuthNumber] = useState(false);
   // 이메일 인증 완료 여부
   const [isAuthStatus, setIsAuthStatus] = useState(false);
+
+  // 로그 찍는용 나중에 꼭 지워야함~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  useEffect(() => {
+    console.log('🚀 ~ Signup ~ authNumber:', authNumber);
+  }, [authNumber]);
 
   const formInitialValues = {
     userName: '',
@@ -41,14 +47,19 @@ const Signup = () => {
     },
     onSubmit: async (values) => {
       const { userName, userEmail, userPassword } = values;
-      setIsLoading(true);
-      const response = await postSignup({ userName, userEmail, userPassword });
-      signupFormik.resetForm();
-      if (response.result === true) {
+      try {
+        setIsLoading(true);
+        const response = await apiPostSignup({ userName, userEmail, userPassword });
+        signupFormik.resetForm();
+        if (response.result === true) {
+          toast.success('회원이 되신걸 환영합니다.');
+          router.push('/');
+        } else {
+          toast.error(response.message);
+        }
         setIsLoading(false);
-        router.push('/');
-      } else {
-        console.error(response.message);
+      } catch (error) {
+        console.error(`회원가입 에러: ${error}`);
       }
     },
   });
@@ -72,37 +83,42 @@ const Signup = () => {
     setIsLoading(true);
     const userEmail = signupFormik.values.userEmail;
     if (!userEmail) {
-      alert('이메일을 작성해 주세요');
+      toast.error('이메일을 입력해주세요.');
       setIsLoading(false);
       return;
     }
-    const response = await sendAuthNumberEmail(userEmail);
-    if (response) {
-      setAuthNumber(String(response.authNumber));
+    const response = await apiSendAuthNumberEmail(userEmail);
+    if (response.result === true) {
+      setAuthNumber(Number(response.authNumber));
       setIsAuthNumber(true);
       setIsLoading(false);
     } else {
+      toast.error(response.message);
+      setIsAuthNumber(false);
+      setIsLoading(false);
       console.error(response.message);
     }
   };
 
   // 이메일 인증 확인
   const handleVerifyAuthNumberEmail = () => {
-    if (signupFormik.values.userAuthNumber === authNumber) {
+    if (Number(signupFormik.values.userAuthNumber) === authNumber) {
+      toast.success('이메일 인증 성공!');
       setIsAuthStatus(true);
     } else {
+      toast.error('인증 번호가 틀렸습니다.');
       setIsAuthStatus(false);
     }
   };
 
   return (
     <SignupStyled>
-      <form onSubmit={signupFormik.handleSubmit} className="signupWrap">
+      <form className="signupWrap" onSubmit={signupFormik.handleSubmit}>
         <div className="signupTextBox">
           <div className="signupTitleText">Moodify</div>
           <div className="signupSmallText">감정으로 음악을 만들다.</div>
         </div>
-        <div>
+        <div className="signupUsername">
           <Input
             placeholder="닉네임"
             id="userName"
@@ -111,35 +127,61 @@ const Signup = () => {
             required
           />
         </div>
-        <div>
-          <Input
-            placeholder="이메일"
-            id="userEmail"
-            onChange={signupFormik.handleChange}
-            value={signupFormik.values.userEmail}
-            required
-          />
+        <div className="signupUserEmail">
+          {isAuthNumber ? (
+            <Input
+              placeholder="이메일"
+              id="userEmail"
+              onChange={signupFormik.handleChange}
+              value={signupFormik.values.userEmail}
+              required
+              readOnly
+            />
+          ) : (
+            <Input
+              placeholder="이메일"
+              id="userEmail"
+              onChange={signupFormik.handleChange}
+              value={signupFormik.values.userEmail}
+              required
+            />
+          )}
+
           {errorEmailMessage}
-          <Button htmlType="button" onClick={handleSendAuthNumberEmail}>
-            {isLoading ? <Spin size="small" /> : '인증받기'}
-          </Button>
+          {isAuthNumber ? (
+            <></>
+          ) : (
+            <Button htmlType="button" onClick={handleSendAuthNumberEmail}>
+              {isLoading ? <Spin size="small" /> : '인증받기'}
+            </Button>
+          )}
         </div>
         {isAuthNumber ? (
-          <div>
-            <Input
-              placeholder="인증번호"
-              id="userAuthNumber"
-              onChange={signupFormik.handleChange}
-              value={signupFormik.values.userAuthNumber}
-            />
-            <Button htmlType="button" onClick={handleVerifyAuthNumberEmail}>
-              인증하기
-            </Button>
-          </div>
+          <>
+            {isAuthStatus ? (
+              <></>
+            ) : (
+              <div className="signupUserAuthNumber">
+                <Input
+                  placeholder="인증번호"
+                  id="userAuthNumber"
+                  onChange={signupFormik.handleChange}
+                  value={signupFormik.values.userAuthNumber}
+                />
+                {isAuthStatus ? (
+                  <></>
+                ) : (
+                  <Button htmlType="button" onClick={handleVerifyAuthNumberEmail}>
+                    인증하기
+                  </Button>
+                )}
+              </div>
+            )}
+          </>
         ) : (
           <></>
         )}
-        <div>
+        <div className="signupUserPassword">
           <Password
             placeholder="비밀번호"
             id="userPassword"
@@ -148,7 +190,7 @@ const Signup = () => {
             required
           />
         </div>
-        <div>
+        <div className="signupUserPasswordConfirm">
           <Password
             placeholder="비밀번호 확인"
             id="userPasswordConfirm"
