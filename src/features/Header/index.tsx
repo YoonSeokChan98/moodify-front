@@ -62,7 +62,7 @@ const Header = () => {
           <div onClick={() => clickLogo()}>{logoObj}</div>
         </div>
         <div className="headerNavBar">
-          <Button onClick={() => clickDevelopAlert()}>메뉴1</Button>
+          <Button onClick={() => router.push('/emotion_extraction')}>감정 음악 만들기</Button>
           <Button onClick={() => clickDevelopAlert()}>메뉴2</Button>
           <Button onClick={() => clickDevelopAlert()}>메뉴3</Button>
         </div>

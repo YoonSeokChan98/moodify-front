@@ -29,3 +29,22 @@ export interface UserStateType {
     userToken: string;
   } | null;
 }
+
+// 이미지 url
+export interface ImageType {
+  imageSrc: string | null;
+}
+
+// 감정
+
+export interface EmotionType {
+  item: {
+    angry?: number;
+    disgusted?: number;
+    fearful?: number;
+    happy?: number;
+    neutral?: number;
+    sad?: number;
+    surprised?: number;
+  };
+}
