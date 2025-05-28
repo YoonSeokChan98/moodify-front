@@ -3,10 +3,21 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import type { ChartData, ChartOptions } from 'chart.js';
 import { EmotionType } from '@/types';
+import { useEffect, useState } from 'react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const UserEmotionChart = ({ item }: EmotionType) => {
+  const [labels, setLabels] = useState<string[]>([
+    'neutral',
+    'happy',
+    'sad',
+    'angry',
+    'fearful',
+    'disgusted',
+    'surprised',
+  ]);
+  const [data, setData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
   const colors = [
     'rgba(255, 99, 132, 0.5)',
     'rgba(54, 162, 235, 0.5)',
@@ -25,16 +36,18 @@ const UserEmotionChart = ({ item }: EmotionType) => {
     'rgba(255, 159, 64, 1)',
     'rgba(201, 203, 207, 1)',
   ];
-
+  useEffect(() => {
+    if (item) {
+      setLabels(Object.keys(item));
+      setData(Object.values(item));
+    }
+  }, [item]);
   // object로 넘어온 감정 데이터를 배열로 변환
-  const labels = Object.keys(item);
-  const data = Object.values(item);
-
   const chartData: ChartData<'bar'> = {
     labels,
     datasets: [
       {
-        label: '감정 수치',
+        label: '내 감정 그래프',
         data,
         backgroundColor: colors.slice(0, labels.length),
         borderColor: borderColors.slice(0, labels.length),
@@ -48,14 +61,10 @@ const UserEmotionChart = ({ item }: EmotionType) => {
     maintainAspectRatio: false,
   };
 
-  const chart = item ? <Bar data={chartData} options={options} /> : <div>감정을 출력하려면 이미지를 등록해주세요</div>;
-
   return (
     <UserEmotionChartStyled>
       <div className="userEmotionChartWrap">
-        <div className="emotionChart">
-          <Bar data={chartData} options={options} />
-        </div>
+        <Bar  data={chartData} options={options} />
       </div>
     </UserEmotionChartStyled>
   );

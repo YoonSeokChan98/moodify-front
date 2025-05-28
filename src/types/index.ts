@@ -36,7 +36,6 @@ export interface ImageType {
 }
 
 // 감정
-
 export interface EmotionType {
   item: {
     angry?: number;

@@ -1,4 +1,6 @@
+import Loading from '@/components/Loading';
 import { MainStyled } from './styled';
+import { Skeleton } from 'antd';
 
 const Main = () => {
   return (

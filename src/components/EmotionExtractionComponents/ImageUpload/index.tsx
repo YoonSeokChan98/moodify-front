@@ -120,13 +120,16 @@ const ImageUpload = () => {
       <div className="imageUploadWrap">
         <div className="imageUploadImgBox">{imageContentBox}</div>
         <div className="imageUploadControllerBox">
-          <Upload {...props}>
-            <Button icon={<UploadOutlined />}>이미지 업로드</Button>
+          <Upload action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" listType="picture" {...props}>
+            <Button type="primary" icon={<UploadOutlined />}>
+              이미지 업로드
+            </Button>
           </Upload>
         </div>
       </div>
       <div>
-        {userEmotions}
+        <UserEmotionChart item={detections} />
+        {/* {userEmotions} */}
       </div>
     </ImageUploadStyled>
   );
