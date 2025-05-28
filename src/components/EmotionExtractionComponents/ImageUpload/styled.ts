@@ -8,10 +8,19 @@ export const ImageUploadStyled = styled.div`
     justify-content: center;
     align-items: center;
     min-height: 20vh;
+    .imageUploadControllerBox {
+      text-align: start;
+      .imageUploadBtn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 auto;
+      }
+    }
     .imageUploadImgBox {
       /* border: 1px solid; */
-      max-width: 400px;
-      max-height: 400px;
+      width: 300px;
+      height: 300px;
       .imageUploadImg {
         border-radius: 15px;
         width: 100%;
@@ -20,5 +29,10 @@ export const ImageUploadStyled = styled.div`
         object-position: center;
       }
     }
+  }
+  .loadingBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;

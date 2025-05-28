@@ -1,6 +1,6 @@
 import { ImageUploadStyled } from './styled';
-import { Button, Upload } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Button, Spin, Upload } from 'antd';
+import { StarOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import * as faceApi from 'face-api.js';
@@ -8,43 +8,79 @@ import UserEmotionChart from '../UserEmotionChart';
 
 const ImageUpload = () => {
   const imageRef = useRef<HTMLImageElement | null>(null);
-  // const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
   const [detections, setDetections] = useState<any>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [step, setStep] = useState<'idle' | 'uploading' | 'analyzing' | 'done'>('idle');
 
   //upload props 설정
   const props: UploadProps = {
     name: 'file',
     action: '',
     fileList,
+    onChange({ file }) {
+      if (file.status !== 'uploading') {
+        console.log(file);
+      }
+    },
+    defaultFileList: [
+      {
+        uid: '1',
+        name: 'xxx.png',
+        status: 'uploading',
+        url: 'http://www.baidu.com/xxx.png',
+        percent: 33,
+      },
+      {
+        uid: '2',
+        name: 'yyy.png',
+        status: 'done',
+        url: 'http://www.baidu.com/yyy.png',
+      },
+      {
+        uid: '3',
+        name: 'zzz.png',
+        status: 'error',
+        response: 'Server Error 500', // custom error message to show
+        url: 'http://www.baidu.com/zzz.png',
+      },
+    ],
+    showUploadList: {
+      extra: ({ size = 0 }) => <span style={{ color: '#cccccc' }}>({(size / 1024 / 1024).toFixed(2)}MB)</span>,
+    },
     beforeUpload(file: any) {
-      setFileList([file]);
+      setStep('uploading');
       // antd upload로 만든 이미지 정보를 src를 만들기
       const objectUrl = URL.createObjectURL(file);
       // 만들어진 url 정보 저장
       setImageSrc(objectUrl);
+      setFileList([file]);
+
       return false;
     },
     onRemove(file) {
+      setFileList([]);
+      setDetections(null);
       setImageSrc(null);
+      setStep('idle');
     },
   };
 
   const imageContentBox =
     imageSrc === null ? (
-      <div className='noneImgBox'></div>
+      <></>
     ) : (
       <>
-        <img className="imageUploadImg" ref={imageRef} src={imageSrc} alt="분석 이미지" />
-        {/* <canvas ref={canvasRef} /> */}
+        <div className="imageUploadImgBox">
+          <img className="imageUploadImg" ref={imageRef} src={imageSrc} alt="분석 이미지" />
+        </div>
       </>
     );
 
   // face-api.js
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const loadModels = async () => {
       const MODEL_URL = '/models';
       try {
@@ -54,11 +90,11 @@ const ImageUpload = () => {
           faceApi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
           faceApi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
         ]);
-        // console.log('모델 로드 성공');
-        setLoading(false);
+        console.log('모델 로드 성공');
+        // setLoading(false);
       } catch (error) {
-        // console.error('모델 로드 오류:', error);
-        setLoading(false);
+        console.error('모델 로드 오류:', error);
+        // setLoading(false);
       }
     };
     loadModels();
@@ -68,56 +104,51 @@ const ImageUpload = () => {
     if (!imageRef.current || !imageSrc) return;
 
     const analyzeImage = async () => {
+      setStep('analyzing');
       try {
         await new Promise((resolve) => {
           imageRef.current!.onload = resolve;
         });
-        /**
-        canvasRef.current!.width = imageRef.current!.width;
-        canvasRef.current!.height = imageRef.current!.height;
-         */
 
         const newDetections = await faceApi
           .detectAllFaces(imageRef.current!, new faceApi.SsdMobilenetv1Options())
           .withFaceLandmarks()
           .withFaceExpressions();
         setDetections(newDetections[0].expressions);
-
-        /** 
-          const canvas = canvasRef.current!;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const displaySize = {
-            width: imageRef.current!.width,
-            height: imageRef.current!.height,
-          };
-          faceApi.matchDimensions(canvas, displaySize);
-          const resizedDetections = faceApi.resizeResults(detections, displaySize);
-          faceApi.draw.drawDetections(canvasRef.current!, resizedDetections);
-          faceApi.draw.drawFaceExpressions(canvasRef.current!, resizedDetections);
-          }
-         */
       } catch (error) {
         console.error(error);
       }
+      setStep('done');
     };
+
     analyzeImage();
   }, [imageSrc]);
 
   return (
     <ImageUploadStyled>
       <div className="imageUploadWrap">
-        <div className="imageUploadImgBox">{imageContentBox}</div>
+        {imageContentBox}
         <div className="imageUploadControllerBox">
-          <Upload  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" listType="picture" {...props}>
-            <Button type="primary" icon={<UploadOutlined />}>
-            이미지 업로드하기
-            </Button>
+          <Upload className="imageUploadBtn" {...props}>
+            <Button icon={<UploadOutlined />}>이미지로 감정 분석하기</Button>
           </Upload>
         </div>
       </div>
       <div>
+        <div className="loadingBox">
+          {step === 'uploading' && (
+            <>
+              <Spin size="large" style={{ color: 'black', fontSize: 18 }} />
+              <div>이미지 업로드 중입니다...</div>
+            </>
+          )}
+          {step === 'analyzing' && (
+            <>
+              <Spin size="large" style={{ color: 'black', fontSize: 18 }} />
+              <div>AI 분석 중입니다...</div>
+            </>
+          )}
+        </div>
         <UserEmotionChart item={detections} />
         {/* {userEmotions} */}
       </div>

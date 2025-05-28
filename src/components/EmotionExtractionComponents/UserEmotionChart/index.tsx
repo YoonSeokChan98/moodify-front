@@ -8,16 +8,8 @@ import { useEffect, useState } from 'react';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const UserEmotionChart = ({ item }: EmotionType) => {
-  const [labels, setLabels] = useState<string[]>([
-    'neutral',
-    'happy',
-    'sad',
-    'angry',
-    'fearful',
-    'disgusted',
-    'surprised',
-  ]);
-  const [data, setData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [data, setData] = useState<number[]>([]);
   const colors = [
     'rgba(255, 99, 132, 0.5)',
     'rgba(54, 162, 235, 0.5)',
@@ -37,6 +29,10 @@ const UserEmotionChart = ({ item }: EmotionType) => {
     'rgba(201, 203, 207, 1)',
   ];
   useEffect(() => {
+    if (item === null) {
+      setLabels(['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised']);
+      setData([0, 0, 0, 0, 0, 0, 0]);
+    }
     if (item) {
       setLabels(Object.keys(item));
       setData(Object.values(item));
@@ -64,7 +60,7 @@ const UserEmotionChart = ({ item }: EmotionType) => {
   return (
     <UserEmotionChartStyled>
       <div className="userEmotionChartWrap">
-        <Bar  data={chartData} options={options} />
+        <Bar data={chartData} options={options} />
       </div>
     </UserEmotionChartStyled>
   );
