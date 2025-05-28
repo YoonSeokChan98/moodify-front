@@ -34,7 +34,7 @@ const ImageUpload = () => {
 
   const imageContentBox =
     imageSrc === null ? (
-      <div className="noneImgBox">이미지가 없습니다.</div>
+      <div className='noneImgBox'></div>
     ) : (
       <>
         <img className="imageUploadImg" ref={imageRef} src={imageSrc} alt="분석 이미지" />
@@ -105,24 +105,14 @@ const ImageUpload = () => {
     analyzeImage();
   }, [imageSrc]);
 
-  const userEmotions = detections ? (
-    <>
-      <UserEmotionChart item={detections} />
-    </>
-  ) : (
-    <div>
-      <div className="noneImage">감정을 출력하려면 이미지를 등록해주세요</div>
-    </div>
-  );
-
   return (
     <ImageUploadStyled>
       <div className="imageUploadWrap">
         <div className="imageUploadImgBox">{imageContentBox}</div>
         <div className="imageUploadControllerBox">
-          <Upload action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" listType="picture" {...props}>
+          <Upload  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" listType="picture" {...props}>
             <Button type="primary" icon={<UploadOutlined />}>
-              이미지 업로드
+            이미지 업로드하기
             </Button>
           </Upload>
         </div>
