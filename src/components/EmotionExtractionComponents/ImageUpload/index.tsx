@@ -1,15 +1,18 @@
 import { ImageUploadStyled } from './styled';
 import { Button, Spin, Upload } from 'antd';
-import { StarOutlined, UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import * as faceApi from 'face-api.js';
 import UserEmotionChart from '../UserEmotionChart';
+import MusicGen from '../MusicGen';
+import { apiPostAddEmotion } from '@/pages/api/emotionApi';
 
 const ImageUpload = () => {
   const imageRef = useRef<HTMLImageElement | null>(null);
   // const [loading, setLoading] = useState<boolean>(false);
   const [detections, setDetections] = useState<any>(null);
+  console.log('🚀 ~ ImageUpload ~ detections:', detections);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [step, setStep] = useState<'idle' | 'uploading' | 'analyzing' | 'done'>('idle');
@@ -100,6 +103,7 @@ const ImageUpload = () => {
     loadModels();
   }, []);
 
+
   useEffect(() => {
     if (!imageRef.current || !imageSrc) return;
 
@@ -149,8 +153,8 @@ const ImageUpload = () => {
             </>
           )}
         </div>
-        <UserEmotionChart item={detections} />
-        {/* {userEmotions} */}
+        <UserEmotionChart emotions={detections} />
+        <MusicGen emotions={detections} />
       </div>
     </ImageUploadStyled>
   );

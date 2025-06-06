@@ -27,6 +27,7 @@ export interface UserStateType {
     userEmail: string;
     userRole: string;
     userToken: string;
+    userMembershipStatus: string;
   } | null;
 }
 
@@ -37,13 +38,14 @@ export interface ImageType {
 
 // 감정
 export interface EmotionType {
-  item: {
-    angry?: number;
-    disgusted?: number;
-    fearful?: number;
-    happy?: number;
-    neutral?: number;
-    sad?: number;
-    surprised?: number;
+  emotions: {
+    angry?: number | undefined;
+    disgusted?: number | undefined;
+    fearful?: number | undefined;
+    happy?: number | undefined;
+    neutral?: number | undefined;
+    sad?: number | undefined;
+    surprised?: number | undefined;
   };
+  userId: Number | undefined;
 }

@@ -29,9 +29,9 @@ const Header = () => {
     if (cookie) {
       setLoginUser(true);
     } else {
+      dispatch(logOut());
       setLoginUser(false);
     }
-
   }, [cookie]);
 
   // 로그아웃
@@ -63,7 +63,7 @@ const Header = () => {
         </div>
         <div className="headerNavBar">
           <Button onClick={() => router.push('/emotion_extraction')}>감정 음악 만들기</Button>
-          <Button onClick={() => clickDevelopAlert()}>메뉴2</Button>
+          <Button onClick={() => router.push('/my_info')}>내 정보</Button>
           <Button onClick={() => clickDevelopAlert()}>메뉴3</Button>
         </div>
         <div className="headerAuthBar">{loginStatus}</div>

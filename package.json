@@ -26,7 +26,8 @@
     "react-redux": "^9.2.0",
     "react-toastify": "^11.0.5",
     "redux-persist": "^6.0.0",
-    "styled-components": "^6.1.18"
+    "styled-components": "^6.1.18",
+    "suno-ai": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",

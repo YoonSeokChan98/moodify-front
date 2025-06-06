@@ -31,12 +31,13 @@ const Login = () => {
         errors.userEmail = '유효하지 않는 이메일 주소입니다.';
       }
       return errors;
-    },
-    onSubmit: async (values) => {
-      const { userEmail, userPassword } = values;
-      try {
-        setIsLoading(true);
-        const response = await apiPostLogin({ userEmail, userPassword });
+      },
+      onSubmit: async (values) => {
+        const { userEmail, userPassword } = values;
+        try {
+          setIsLoading(true);
+          const response = await apiPostLogin({ userEmail, userPassword });
+          console.log("🚀 ~ onSubmit: ~ response:", response)
         loginFormik.resetForm();
 
         if (response.result === false) {
@@ -57,6 +58,7 @@ const Login = () => {
               userName: response.data.name,
               userEmail: response.data.email,
               userRole: response.data.role,
+              userMembershipStatus: response.data.membershipStatus,
               userToken: response.token,
             })
           );

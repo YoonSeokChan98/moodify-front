@@ -4,10 +4,16 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import type { ChartData, ChartOptions } from 'chart.js';
 import { EmotionType } from '@/types';
 import { useEffect, useState } from 'react';
+import { apiPostAddEmotion } from '@/pages/api/emotionApi';
+import Cookies from 'js-cookie';
+import { store } from '@/redux/store';
+import { toast } from 'react-toastify';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const UserEmotionChart = ({ item }: EmotionType) => {
+const UserEmotionChart = ({ emotions }: EmotionType) => {
+  const cookie = Cookies.get('userToken');
+  console.log('🚀 ~ UserEmotionChart ~ item:', emotions);
   const [labels, setLabels] = useState<string[]>([]);
   const [data, setData] = useState<number[]>([]);
   const colors = [
@@ -29,15 +35,29 @@ const UserEmotionChart = ({ item }: EmotionType) => {
     'rgba(201, 203, 207, 1)',
   ];
   useEffect(() => {
-    if (item === null) {
+    if (emotions === null) {
       setLabels(['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised']);
       setData([0, 0, 0, 0, 0, 0, 0]);
     }
-    if (item) {
-      setLabels(Object.keys(item));
-      setData(Object.values(item));
+    if (emotions) {
+      setLabels(Object.keys(emotions));
+      setData(Object.values(emotions));
     }
-  }, [item]);
+    if (cookie) {
+      const handleAddEmotion = async () => {
+        try {
+          const userId = store.getState().user.userInfo?.userId;
+          const response = await apiPostAddEmotion({ userId, emotions });
+          if (response.result === true) {
+            toast.success('분석한 감정이 저장되었습니다.');
+          }
+        } catch (error) {
+          console.error(`감정 DB저장 에러: ${error}`);
+        }
+      };
+      handleAddEmotion();
+    }
+  }, [emotions]);
   // object로 넘어온 감정 데이터를 배열로 변환
   const chartData: ChartData<'bar'> = {
     labels,

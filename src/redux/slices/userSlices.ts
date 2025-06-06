@@ -8,6 +8,7 @@ const initialState: UserStateType = {
     userName: '',
     userEmail: '',
     userRole: '',
+    userMembershipStatus: '',
     userToken: '',
   },
 };
@@ -23,6 +24,7 @@ export const userSlice = createSlice({
         userName: string;
         userEmail: string;
         userRole: string;
+        userMembershipStatus: string;
         userToken: string;
       }>
     ) => {
