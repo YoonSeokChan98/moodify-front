@@ -5,14 +5,18 @@ import type { UploadFile, UploadProps } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import * as faceApi from 'face-api.js';
 import UserEmotionChart from '../UserEmotionChart';
-import MusicGen from '../MusicGen';
-import { apiPostAddEmotion } from '@/pages/api/emotionApi';
+import { EmotionType } from '@/types';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/redux/store';
+import { updateEmotion } from '@/redux/slices/emotionSlices';
 
 const ImageUpload = () => {
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const imageRef = useRef<HTMLImageElement | null>(null);
   // const [loading, setLoading] = useState<boolean>(false);
-  const [detections, setDetections] = useState<any>(null);
-  console.log('🚀 ~ ImageUpload ~ detections:', detections);
+  const [detections, setDetections] = useState<EmotionType | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [step, setStep] = useState<'idle' | 'uploading' | 'analyzing' | 'done'>('idle');
@@ -103,7 +107,6 @@ const ImageUpload = () => {
     loadModels();
   }, []);
 
-
   useEffect(() => {
     if (!imageRef.current || !imageSrc) return;
 
@@ -118,7 +121,21 @@ const ImageUpload = () => {
           .detectAllFaces(imageRef.current!, new faceApi.SsdMobilenetv1Options())
           .withFaceLandmarks()
           .withFaceExpressions();
-        setDetections(newDetections[0].expressions);
+        const newEmotions = newDetections[0].expressions;
+        console.log('🚀 ~ analyzeImage ~ newEmotions:', newEmotions);
+        // 이게 뭔 에러냐...
+        dispatch(
+          updateEmotion({
+            angry: newEmotions.angry,
+            disgusted: newEmotions.disgusted,
+            fearful: newEmotions.fearful,
+            happy: newEmotions.happy,
+            neutral: newEmotions.neutral,
+            sad: newEmotions.sad,
+            surprised: newEmotions.surprised,
+          })
+        );
+        // setDetections(newEmotions);
       } catch (error) {
         console.error(error);
       }
@@ -153,8 +170,10 @@ const ImageUpload = () => {
             </>
           )}
         </div>
-        <UserEmotionChart emotions={detections} />
-        <MusicGen emotions={detections} />
+        <UserEmotionChart />
+        <div>
+          <Button onClick={() => router.push('/emotion_diary')}>감정일기 작성하기</Button>
+        </div>
       </div>
     </ImageUploadStyled>
   );

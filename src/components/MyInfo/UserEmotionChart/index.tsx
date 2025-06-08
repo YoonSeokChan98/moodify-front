@@ -10,7 +10,6 @@ const UserEmotionChart = () => {
       <div className='UserEmotionChartWrap'>
         <div className='title'>감정 데이터 분석</div>
         <div className='emotionChart'>
-
         </div>
       </div>
     </UserEmotionChartStyled>

@@ -46,6 +46,27 @@ export interface EmotionType {
     neutral?: number | undefined;
     sad?: number | undefined;
     surprised?: number | undefined;
-  };
-  userId: Number | undefined;
+  } | null;
+}
+
+// 감정일기
+export interface EmotionDiaryType {
+  emotions: {
+    angry?: number;
+    disgusted?: number;
+    fearful?: number;
+    happy?: number;
+    neutral?: number;
+    sad?: number;
+    surprised?: number;
+  } | null;
+  userId: Number | null | undefined;
+}
+
+export interface getReduxEmotionType {
+  getReduxEmotion: string | number
+}
+
+export interface emotionQuestionsType {
+  
 }

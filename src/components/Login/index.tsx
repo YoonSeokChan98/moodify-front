@@ -37,7 +37,6 @@ const Login = () => {
         try {
           setIsLoading(true);
           const response = await apiPostLogin({ userEmail, userPassword });
-          console.log("🚀 ~ onSubmit: ~ response:", response)
         loginFormik.resetForm();
 
         if (response.result === false) {
