@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EmotionDiaryStyled } from './styled';
-import { store } from '@/redux/store';
-import { Button, Input } from 'antd';
+import { AppDispatch, store } from '@/redux/store';
+import { Button, Input, Switch } from 'antd';
 import { useFormik } from 'formik';
 // 에디터 관련
 import dynamic from 'next/dynamic';
@@ -9,8 +9,14 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 // api
 import { apiPostUploadImageFile, apiPostWriteBoard } from '@/pages/api/boardApi';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { removeEmotions } from '@/redux/slices/emotionSlices';
 
 const EmotionDiary = () => {
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const [visibility, setVisibility] = useState(false);
   const [highEmotion, setHighEmotion] = useState<{ key: string; value: number }>({ key: '', value: 0 });
   const getReduxEmotion = store.getState().emotions.emotions as Record<string, number | undefined> | undefined;
 
@@ -50,14 +56,12 @@ const EmotionDiary = () => {
   };
 
   // 게시글 데이터
-  const [subject, setSubject] = useState('');
-  const [content, setContent] = useState('');
-  // useEffect(() => {
-  //   console.log('감정에 따른 질문: ', question, '게시글 제목: ', subject, '게시글 내용: ', content);
-  // }, [subject, content]);
+  const [titleState, setTitleState] = useState<string>('');
+  const [contentState, setContentState] = useState<string>('');
 
   // 감정에 따른 질문 추출
   useEffect(() => {
+    setVisibility(false);
     if (!getReduxEmotion || Object.keys(getReduxEmotion).length === 0) {
       setHighEmotion({ key: '', value: 0 });
       return;
@@ -85,25 +89,29 @@ const EmotionDiary = () => {
   // 폼 관리
   const formInitialValues = {
     question: question,
-    subject: '',
+    title: '',
     content: '',
   };
   const emotionDiaryFormik = useFormik({
     initialValues: formInitialValues,
     onSubmit: async (values) => {
       try {
-        const { subject, content } = values;
-        setSubject(subject);
-        setContent(content);
+        const { title, content } = values;
+        if (!title) {
+          return alert('제목을 입력해 주세요');
+        }
+        if (!content) {
+          return alert('오늘 하루를 기록해 보세요!');
+        }
+        setTitleState(title);
+        setContentState(content);
         const imgRegex = /<img[^>]*src\s*=\s*[\"']?([^>\"']+)[\"']?[^>]*>/gi;
         const matches = Array.from(content.matchAll(imgRegex));
-        // console.log('찾은 이미지 개수: ', matches.length);
 
         // 각 이미지에 순차적으로 접근
         for (let i = 0; i < matches.length; i++) {
-          // src = Base64_data
+          // src === Base64_data
           const src = matches[i][1];
-          // console.log(`이미지 ${i + 1} src: ${src}`);
 
           // Base64 데이터인지 검증
           if (!src.startsWith('data:image/')) {
@@ -135,12 +143,7 @@ const EmotionDiary = () => {
 
             const blob = new Blob([ia], { type: mimeType });
             const file = new File([blob], `image_${i + 1}.${fileExtension}`, { type: mimeType });
-            // console.log('생성된 파일:', {
-            //   name: file.name,
-            //   size: file.size,
-            //   type: file.type,
-            // });
-
+            // console.log('생성된 파일:', { name: file.name, size: file.size, type: file.type });
             const formData = new FormData();
             formData.append('file', file);
             const res = await apiPostUploadImageFile(formData);
@@ -152,7 +155,7 @@ const EmotionDiary = () => {
 
               for (const base64Src in srcToUrlMap) {
                 const uploadedUrl = srcToUrlMap[base64Src];
-                setContent(updatedContent.replaceAll(base64Src, uploadedUrl));
+                setContentState(updatedContent.replaceAll(base64Src, uploadedUrl));
               }
             } else {
               console.error('업로드 실패:', res);
@@ -164,24 +167,32 @@ const EmotionDiary = () => {
           }
         }
         const userId = store.getState().user.userInfo?.userId;
-        console.log("🚀 ~ onSubmit: ~ userId:", userId)
         if (!userId) {
           console.log('유저 정보가 없습니다');
         }
         const userEmotion = store.getState().emotions.emotions;
-        console.log('🚀 ~ onSubmit: ~ userEmotion:', userEmotion);
 
-        // 1. 감정데이터 db에 저장하기(userId 필요) -> db에 저장된 감정데이터 pId 프론트에 전달
-        // 2. 감정데이터로 작성한 게시글  db에 저장하기(emotionId 필요)
+        let visibilityStatus = '';
+        if (visibility === true) {
+          visibilityStatus = 'public';
+        } else {
+          visibilityStatus = 'private';
+        }
+
         const newEmotionDiary = {
+          visibilityStatus: visibilityStatus,
           userEmotion: userEmotion,
           userId: userId,
           question: question,
-          subject: subject,
-          content: content,
+          title: titleState,
+          content: contentState,
         };
         const response = await apiPostWriteBoard(newEmotionDiary);
-        console.log('🚀 ~ onSubmit: ~ response:', response);
+        if (response.result === false) {
+          alert('글 작성 중 문제 발생: 다시 시도해 주세요');
+        }
+        dispatch(removeEmotions());
+        router.push('/');
       } catch (error) {
         console.error(`감정 일기 에러: ${error}`);
       }
@@ -192,14 +203,11 @@ const EmotionDiary = () => {
     toolbar: [
       [{ font: [] }],
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-      ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'], // toggled buttons
+      ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
       ['link', 'image'],
-
-      [{ align: [] }, { color: [] }, { background: [] }], // dropdown with defaults from theme
-
+      [{ align: [] }, { color: [] }, { background: [] }],
       [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+      [{ indent: '-1' }, { indent: '+1' }],
     ],
   };
 
@@ -211,17 +219,17 @@ const EmotionDiary = () => {
             <div className="questionBox">
               오늘의 질문: <div>{question}</div>
             </div>
-            <div className="subjectBox">
+            <div className="titleBox">
               <Input
                 placeholder="제목을 입력해 주세요"
-                id="subject"
+                id="title"
                 onChange={emotionDiaryFormik.handleChange}
-                value={emotionDiaryFormik.values.subject}
+                value={emotionDiaryFormik.values.title}
               />
             </div>
             <div className="contentBox">
               <ReactQuill
-                placeholder="오늘의 감정 일기를 작성해 주세요"
+                placeholder="오늘 하루를 기록해 보세요"
                 theme="snow"
                 modules={modules}
                 id="content"
@@ -229,6 +237,15 @@ const EmotionDiary = () => {
                   emotionDiaryFormik.setFieldValue('content', value);
                 }}
                 value={emotionDiaryFormik.values.content}
+              />
+            </div>
+            <div className="visibilityBox">
+              비공개 / 공개
+              <Switch
+                defaultChecked={false}
+                checkedChildren="공개"
+                unCheckedChildren="비공개"
+                onClick={() => setVisibility(!visibility)}
               />
             </div>
             <div>

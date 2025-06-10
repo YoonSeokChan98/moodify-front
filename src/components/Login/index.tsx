@@ -85,7 +85,7 @@ const Login = () => {
       <form className="loginWrap" onSubmit={loginFormik.handleSubmit}>
         <div className="loginTextBox">
           <div className="loginTitleText">Moodify</div>
-          <div className="loginSmallText">감정으로 음악을 만들다.</div>
+          <div className="loginSmallText">감정을 기록하다.</div>
         </div>
 
         <div className="loginUserEmail">

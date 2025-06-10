@@ -44,20 +44,6 @@ const UserEmotionChart = () => {
       setLabels(Object.keys(emotions));
       setData(Object.values(emotions));
     }
-    // if (cookie) {
-    //   const handleAddEmotion = async () => {
-    //     try {
-    //       const userId = store.getState().user.userInfo?.userId;
-    //       const response = await apiPostAddEmotion({ userId, emotions });
-    //       if (response.result === true) {
-    //         toast.success('분석한 감정이 저장되었습니다.');
-    //       }
-    //     } catch (error) {
-    //       console.error(`감정 DB저장 에러: ${error}`);
-    //     }
-    //   };
-    //   handleAddEmotion();
-    // }
   }, [emotions]);
   // object로 넘어온 감정 데이터를 배열로 변환
   const chartData: ChartData<'bar'> = {

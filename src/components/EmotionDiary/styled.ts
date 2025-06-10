@@ -2,12 +2,9 @@ import styled from 'styled-components';
 
 export const EmotionDiaryStyled = styled.div`
   padding: 40px 20px;
-  /* background: #fdf6f0; 따뜻한 베이지 계열 배경 */
   min-height: 100vh;
-  /* font-family: 'Nanum Pen Script', cursive; 손글씨 느낌 폰트 (웹폰트로 연결 필요) */
 
   .emotionDiaryWrap {
-    /* background: #fffdf9; */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -34,7 +31,7 @@ export const EmotionDiaryStyled = styled.div`
     }
   }
 
-  .subjectBox {
+  .titleBox {
   }
 
   .contentBox {
@@ -42,7 +39,6 @@ export const EmotionDiaryStyled = styled.div`
       min-height: 200px;
       font-size: 18px;
       line-height: 1.6;
-      /* font-family: 'Nanum Pen Script', cursive; */
     }
 
     .ql-toolbar {
@@ -54,20 +50,18 @@ export const EmotionDiaryStyled = styled.div`
     }
   }
 
+  .visibilityBox{
+    font-size: 12px;
+    button{
+      margin-left: 10px;
+      width: 40px;
+    }
+  }
+
   button {
-    /* background-color: #f9c784; */
-    /* border: none; */
     padding: 10px 20px;
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
-    cursor: pointer;
-    /* font-family: 'Nanum Pen Script', cursive; */
-    /* color: #5d4037; */
-    transition: background 0.3s ease;
-
-    &:hover {
-      /* background-color: #f8b66b; */
-    }
   }
 `;

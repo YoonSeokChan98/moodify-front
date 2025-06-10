@@ -22,3 +22,14 @@ export const apiPostWriteBoard = async (newEmotionDiary: any) => {
     console.error(`API 에러: ${error}`);
   }
 };
+
+// 전체 게시글 가져오는 api
+export const apiGetAllBoard = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/get-all-board`);
+    // console.log("🚀 ~ apiGetAllBoard ~ response:", response)
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
+  }
+};

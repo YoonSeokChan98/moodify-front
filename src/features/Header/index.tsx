@@ -7,6 +7,7 @@ import { AppDispatch, store } from '@/redux/store';
 import { logOut } from '@/redux/slices/userSlices';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { removeEmotions } from '@/redux/slices/emotionSlices';
 
 const Header = () => {
   const router = useRouter();
@@ -42,10 +43,19 @@ const Header = () => {
     router.push('/');
   };
 
-  const name = store.getState().user.userInfo?.userName
+  // 감정 분석 페이지
+  const onclickEmotionExtraction = () => {
+    router.push('/emotion_extraction');
+    // 기존에 있는 감정 데이터 초기화
+    dispatch(removeEmotions());
+  };
+
+  const name = store.getState().user.userInfo?.userName;
   const loginStatus = loginUser ? (
     <>
-      <div className='headerUserName'>{name}님</div>
+      <div className="headerUserName" onClick={() => router.push('/my_info')}>
+        {name}님
+      </div>
       <Button onClick={handleLogout}>로그아웃</Button>
     </>
   ) : (
@@ -62,9 +72,9 @@ const Header = () => {
           <div onClick={() => clickLogo()}>{logoObj}</div>
         </div>
         <div className="headerNavBar">
-          <Button onClick={() => router.push('/emotion_extraction')}>감정 음악 만들기</Button>
-          <Button onClick={() => router.push('/my_info')}>내 정보</Button>
-          <Button onClick={() => clickDevelopAlert()}>메뉴3</Button>
+          <Button onClick={() => onclickEmotionExtraction()}>감정 분석</Button>
+          <Button onClick={() => clickDevelopAlert()}>메뉴버튼</Button>
+          <Button onClick={() => clickDevelopAlert()}>메뉴버튼</Button>
         </div>
         <div className="headerAuthBar">{loginStatus}</div>
       </div>

@@ -116,7 +116,7 @@ const Signup = () => {
       <form className="signupWrap" onSubmit={signupFormik.handleSubmit}>
         <div className="signupTextBox">
           <div className="signupTitleText">Moodify</div>
-          <div className="signupSmallText">감정으로 음악을 만들다.</div>
+          <div className="signupSmallText">감정을 기록하다.</div>
         </div>
         <div className="signupUsername">
           <Input

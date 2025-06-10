@@ -32,6 +32,7 @@ export const HeaderStyled = styled.div`
         cursor: pointer;
       }
       .headerUserName {
+        cursor: pointer;
         margin: auto 0;
       }
     }

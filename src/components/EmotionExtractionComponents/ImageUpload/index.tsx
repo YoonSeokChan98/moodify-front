@@ -8,14 +8,13 @@ import UserEmotionChart from '../UserEmotionChart';
 import { EmotionType } from '@/types';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/redux/store';
+import { AppDispatch, store } from '@/redux/store';
 import { updateEmotion } from '@/redux/slices/emotionSlices';
 
 const ImageUpload = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const imageRef = useRef<HTMLImageElement | null>(null);
-  // const [loading, setLoading] = useState<boolean>(false);
   const [detections, setDetections] = useState<EmotionType | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -122,8 +121,6 @@ const ImageUpload = () => {
           .withFaceLandmarks()
           .withFaceExpressions();
         const newEmotions = newDetections[0].expressions;
-        console.log('🚀 ~ analyzeImage ~ newEmotions:', newEmotions);
-        // 이게 뭔 에러냐...
         dispatch(
           updateEmotion({
             angry: newEmotions.angry,
@@ -135,7 +132,6 @@ const ImageUpload = () => {
             surprised: newEmotions.surprised,
           })
         );
-        // setDetections(newEmotions);
       } catch (error) {
         console.error(error);
       }
@@ -144,6 +140,14 @@ const ImageUpload = () => {
 
     analyzeImage();
   }, [imageSrc]);
+
+  const emotion = store.getState().emotions.emotions;
+  const onClickEmotionDiary = () => {
+    if (!emotion) {
+      return alert('감정을 먼저 분석해 주세요!');
+    }
+    router.push('/emotion_diary');
+  };
 
   return (
     <ImageUploadStyled>
@@ -172,7 +176,7 @@ const ImageUpload = () => {
         </div>
         <UserEmotionChart />
         <div>
-          <Button onClick={() => router.push('/emotion_diary')}>감정일기 작성하기</Button>
+          <Button onClick={() => onClickEmotionDiary()}>감정일기 작성하기</Button>
         </div>
       </div>
     </ImageUploadStyled>
