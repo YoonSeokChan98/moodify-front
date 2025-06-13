@@ -5,7 +5,7 @@ import BoardCard from '../BoardCard';
 
 const BoardList = () => {
   const [posts, setPosts] = useState([]);
-  console.log('🚀 ~ BoardList ~ data:', posts);
+  // console.log('🚀 ~ BoardList ~ data:', posts);
   useEffect(() => {
     const getAllBoard = async () => {
       const allBoard = await apiGetAllBoard();
@@ -17,7 +17,11 @@ const BoardList = () => {
   return (
     <BoardListStyled>
       <div className="boardListWrap">
-        {posts.length > 0 ? posts?.map((x, i) => <BoardCard key={i} item={x} />) : <div>게시글이 없습니다.</div>}
+        {posts.length > 0 ? (
+          posts.map((x, i) => <BoardCard key={i} item={x} />)
+        ) : (
+          <div className="emptyMessage">게시글이 없습니다.</div>
+        )}
       </div>
     </BoardListStyled>
   );

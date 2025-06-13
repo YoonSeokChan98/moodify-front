@@ -1,12 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { EmotionDiaryStyled } from './styled';
 import { AppDispatch, store } from '@/redux/store';
 import { Button, Input, Switch } from 'antd';
 import { useFormik } from 'formik';
 // 에디터 관련
+// @ts-ignore
+
 import dynamic from 'next/dynamic';
+import { Quill } from 'react-quill';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
+// @ts-ignore
+import ImageResize from 'quill-image-resize';
+Quill.register('modules/ImageResize', ImageResize);
+
 // api
 import { apiPostUploadImageFile, apiPostWriteBoard } from '@/pages/api/boardApi';
 import { useRouter } from 'next/router';
@@ -59,6 +66,11 @@ const EmotionDiary = () => {
   const [titleState, setTitleState] = useState<string>('');
   const [contentState, setContentState] = useState<string>('');
 
+  useEffect(() => {
+    console.log('변경된 titleState:', titleState);
+    console.log('변경된 contentState:', contentState);
+  }, [titleState, contentState]);
+
   // 감정에 따른 질문 추출
   useEffect(() => {
     setVisibility(false);
@@ -97,16 +109,13 @@ const EmotionDiary = () => {
     onSubmit: async (values) => {
       try {
         const { title, content } = values;
-        if (!title) {
-          return alert('제목을 입력해 주세요');
-        }
-        if (!content) {
-          return alert('오늘 하루를 기록해 보세요!');
-        }
-        setTitleState(title);
-        setContentState(content);
+        if (!title) return alert('제목을 입력해 주세요');
+        if (!content) return alert('오늘 하루를 기록해 보세요!');
+
         const imgRegex = /<img[^>]*src\s*=\s*[\"']?([^>\"']+)[\"']?[^>]*>/gi;
         const matches = Array.from(content.matchAll(imgRegex));
+
+        let finalContent = content;
 
         // 각 이미지에 순차적으로 접근
         for (let i = 0; i < matches.length; i++) {
@@ -131,7 +140,6 @@ const EmotionDiary = () => {
             const byteString = atob(base64Data);
             const ab = new ArrayBuffer(byteString.length);
             const ia = new Uint8Array(ab);
-
             for (let j = 0; j < byteString.length; j++) {
               ia[j] = byteString.charCodeAt(j);
             }
@@ -140,13 +148,13 @@ const EmotionDiary = () => {
             const mimeMatch = src.match(/data:([^;]+)/);
             const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
             const fileExtension = mimeType.split('/')[1] || 'jpg';
-
             const blob = new Blob([ia], { type: mimeType });
             const file = new File([blob], `image_${i + 1}.${fileExtension}`, { type: mimeType });
-            // console.log('생성된 파일:', { name: file.name, size: file.size, type: file.type });
+
             const formData = new FormData();
             formData.append('file', file);
             const res = await apiPostUploadImageFile(formData);
+
             const srcToUrlMap: Record<string, string> = {};
             if (res.result === true) {
               const uploadedUrl = res.data?.url || res.url;
@@ -155,7 +163,7 @@ const EmotionDiary = () => {
 
               for (const base64Src in srcToUrlMap) {
                 const uploadedUrl = srcToUrlMap[base64Src];
-                setContentState(updatedContent.replaceAll(base64Src, uploadedUrl));
+                finalContent = updatedContent.replaceAll(base64Src, uploadedUrl);
               }
             } else {
               console.error('업로드 실패:', res);
@@ -184,13 +192,12 @@ const EmotionDiary = () => {
           userEmotion: userEmotion,
           userId: userId,
           question: question,
-          title: titleState,
-          content: contentState,
+          title: title,
+          content: finalContent,
         };
+
         const response = await apiPostWriteBoard(newEmotionDiary);
-        if (response.result === false) {
-          alert('글 작성 중 문제 발생: 다시 시도해 주세요');
-        }
+        if (response.result === false) return alert('글 작성 중 문제 발생: 다시 시도해 주세요');
         dispatch(removeEmotions());
         router.push('/');
       } catch (error) {
@@ -199,17 +206,22 @@ const EmotionDiary = () => {
     },
   });
 
-  const modules = {
-    toolbar: [
-      [{ font: [] }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
-      ['link', 'image'],
-      [{ align: [] }, { color: [] }, { background: [] }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ indent: '-1' }, { indent: '+1' }],
-    ],
-  };
+  const modules = useMemo(() => {
+    return {
+      toolbar: [
+        [{ font: [] }],
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
+        ['link', 'image'],
+        [{ align: [] }, { color: [] }, { background: [] }],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ indent: '-1' }, { indent: '+1' }],
+      ],
+      ImageResize: {
+        parchment: Quill.import('parchment'),
+      },
+    };
+  }, []);
 
   return (
     <EmotionDiaryStyled>

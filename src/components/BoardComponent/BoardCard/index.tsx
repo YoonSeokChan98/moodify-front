@@ -1,22 +1,22 @@
 import { useEffect } from 'react';
 import { BoardCardStyled } from './styled';
+import { useRouter } from 'next/router';
 
 const BoardCard = (item: any) => {
   const post = item.item;
-  useEffect(() => {
-    console.log(item);
-  }, [item]);
+  console.log('🚀 ~ BoardCard ~ post:', post);
+  const router = useRouter();
 
   return (
     <BoardCardStyled>
-      <div className='boardCardWrap'>
-        <div>게시글 ID: {post.id}</div>
-        <div>게시글 감정ID: {post.emotionId}</div>
-        <div>작성날짜: {post.createdAt.split('T')[0]}</div>
-        <div>질문: {post.question}</div>
-        <div>제목: {post.title}</div>
-        <div>내용: {post.content}</div>
-        <div>공개상태: {post.visibilityStatus}</div>
+      <div className="boardCardWrap" onClick={() => router.push(`/board_detail/${post.id}`)}>
+        <div className="cardId">게시글 ID: {post.id}</div>
+        <div className="cardTitle">제목: {post.title}</div>
+        <div className="cardAuthor">작성자: {post.emotion.user.userName}</div>
+        <div className="cardDate">작성 날짜: {post.createdAt.split('T')[0]}</div>
+        <div className="cardQuestion">질문: {post.question}</div>
+
+        {/* <div className="cardVisibility">공개 상태: {post.visibilityStatus}</div> */}
       </div>
     </BoardCardStyled>
   );
