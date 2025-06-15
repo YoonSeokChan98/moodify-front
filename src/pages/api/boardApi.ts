@@ -6,6 +6,8 @@ const API_URL = `${BACK_URL}/api/board`;
 // 이미지 업로드 api
 export const apiPostUploadImageFile = async (formData: any) => {
   try {
+    console.log('test');
+
     const response = await axios.post(`${API_URL}/upload-image-folder`, formData);
     return response.data;
   } catch (error) {
@@ -17,7 +19,6 @@ export const apiPostUploadImageFile = async (formData: any) => {
 export const apiPostWriteBoard = async (newEmotionDiary: any) => {
   try {
     const response = await axios.post(`${API_URL}/write-board`, newEmotionDiary);
-    console.log("🚀 ~ apiPostWriteBoard ~ response:", response)
     return response.data;
   } catch (error) {
     console.error(`API 에러: ${error}`);
@@ -28,7 +29,6 @@ export const apiPostWriteBoard = async (newEmotionDiary: any) => {
 export const apiGetAllBoard = async () => {
   try {
     const response = await axios.get(`${API_URL}/get-all-board`);
-    // console.log("🚀 ~ apiGetAllBoard ~ response:", response)
     return response.data;
   } catch (error) {
     console.error(`API 에러: ${error}`);
@@ -37,11 +37,30 @@ export const apiGetAllBoard = async () => {
 
 // 게시글 1개 가져오는 api / 게시글 상세페이지
 export const apiGetOneBoard = async (id: string | string[]) => {
-  console.log('🚀 ~ apiGetOneBoard ~ id:', id);
   try {
     const response = await axios.get(`${API_URL}/get-one-board`, {
       params: { id },
     });
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
+  }
+};
+
+// 게시글 수정
+export const apiPatchUpdateBoard = async (updateBoardData: any) => {
+  try {
+    const response = await axios.patch(`${API_URL}/update-board`, updateBoardData);
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
+  }
+};
+
+// 게시글 삭제
+export const apiPatchRemoveBoard = async (id: string | string[] | undefined) => {
+  try {
+    const response = await axios.patch(`${API_URL}/remove-board`, { id });
     return response.data;
   } catch (error) {
     console.error(`API 에러: ${error}`);

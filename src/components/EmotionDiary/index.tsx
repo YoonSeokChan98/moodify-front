@@ -3,9 +3,8 @@ import { EmotionDiaryStyled } from './styled';
 import { AppDispatch, store } from '@/redux/store';
 import { Button, Input, Switch } from 'antd';
 import { useFormik } from 'formik';
-// 에디터 관련
-// @ts-ignore
 
+// 에디터 관련
 import dynamic from 'next/dynamic';
 import { Quill } from 'react-quill';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -62,15 +61,6 @@ const EmotionDiary = () => {
     ],
   };
 
-  // 게시글 데이터
-  const [titleState, setTitleState] = useState<string>('');
-  const [contentState, setContentState] = useState<string>('');
-
-  useEffect(() => {
-    console.log('변경된 titleState:', titleState);
-    console.log('변경된 contentState:', contentState);
-  }, [titleState, contentState]);
-
   // 감정에 따른 질문 추출
   useEffect(() => {
     setVisibility(false);
@@ -124,7 +114,7 @@ const EmotionDiary = () => {
 
           // Base64 데이터인지 검증
           if (!src.startsWith('data:image/')) {
-            console.log(`Base64 이미지가 아닙니다: ${src}`);
+            console.log(`Base64 이미지가 아님 (index ${i}): ${src}`);
             continue;
           }
 
@@ -155,16 +145,9 @@ const EmotionDiary = () => {
             formData.append('file', file);
             const res = await apiPostUploadImageFile(formData);
 
-            const srcToUrlMap: Record<string, string> = {};
             if (res.result === true) {
               const uploadedUrl = res.data?.url || res.url;
-              srcToUrlMap[src] = uploadedUrl;
-              let updatedContent = content;
-
-              for (const base64Src in srcToUrlMap) {
-                const uploadedUrl = srcToUrlMap[base64Src];
-                finalContent = updatedContent.replaceAll(base64Src, uploadedUrl);
-              }
+              finalContent = finalContent.replaceAll(src, uploadedUrl);
             } else {
               console.error('업로드 실패:', res);
               alert('서버에 이미지 업로드를 실패했습니다.');
@@ -201,7 +184,7 @@ const EmotionDiary = () => {
         dispatch(removeEmotions());
         router.push('/');
       } catch (error) {
-        console.error(`감정 일기 에러: ${error}`);
+        console.error(`감정 일기 등록 에러: ${error}`);
       }
     },
   });

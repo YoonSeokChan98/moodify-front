@@ -5,11 +5,16 @@ import BoardCard from '../BoardCard';
 
 const BoardList = () => {
   const [posts, setPosts] = useState([]);
-  // console.log('🚀 ~ BoardList ~ data:', posts);
   useEffect(() => {
     const getAllBoard = async () => {
       const allBoard = await apiGetAllBoard();
-      setPosts(allBoard.data);
+
+      // 삭제 상태 && 비공개가 아닌 게시글만 필터링 한 뒤 posts에 넣어줌
+      const filteredPosts = allBoard.data.filter(
+        (board: { removeStatus: boolean; visibilityStatus: string }) =>
+          board.removeStatus === false && board.visibilityStatus === 'public'
+      );
+      setPosts(filteredPosts);
     };
     getAllBoard();
   }, []);
