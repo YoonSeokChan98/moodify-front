@@ -2,19 +2,16 @@ import { UserEmotionChartStyled } from './styled';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import type { ChartData, ChartOptions } from 'chart.js';
-import { EmotionType } from '@/types';
 import { useEffect, useState } from 'react';
-import { apiPostAddEmotion } from '@/pages/api/emotionApi';
 import Cookies from 'js-cookie';
 import { store } from '@/redux/store';
-import { toast } from 'react-toastify';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const UserEmotionChart = () => {
-  const cookie = Cookies.get('userToken');
+  // const cookie = Cookies.get('userToken');
 
-  const emotions = store.getState().emotions.emotions
+  const emotions = store.getState().emotions.emotions;
   const [labels, setLabels] = useState<string[]>([]);
   const [data, setData] = useState<number[]>([]);
   const colors = [

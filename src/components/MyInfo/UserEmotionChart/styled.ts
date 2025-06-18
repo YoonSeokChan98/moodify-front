@@ -10,8 +10,8 @@ export const UserEmotionChartStyled = styled.div`
       font-weight: bolder;
       font-size: 30px;
     }
-    .emotionChart{
-      border: 1px solid;
+    .emotionChart {
+      /* border: 1px solid; */
       width: 70%;
       height: 400px;
     }

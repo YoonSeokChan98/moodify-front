@@ -21,3 +21,14 @@ export const apiPostWriteEmotionDiary = async (newEmotionDiary: any) => {
     console.error(`API 에러: ${error}`);
   }
 };
+
+// 마이페이지 사용자 감정들 가져오기
+export const apiGetAllUserEmotion = async (userId: Number | undefined) => {
+  try {
+    const response = await axios.get(`${API_URL}/get-all-user-emotion`, { params: { userId } });
+    // console.log('🚀 ~ apiGetAllUserEmotion ~ response:', response);
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
+  }
+};

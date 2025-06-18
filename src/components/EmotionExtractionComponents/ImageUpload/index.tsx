@@ -175,7 +175,7 @@ const ImageUpload = () => {
           )}
         </div>
         <UserEmotionChart />
-        <div>
+        <div className='writeBoardBtn'>
           <Button onClick={() => onClickEmotionDiary()}>감정일기 작성하기</Button>
         </div>
       </div>

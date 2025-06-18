@@ -20,6 +20,12 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
+  // middleware: getDefaultMiddleware({
+  //   serializableCheck: {
+  //     // redux-persist의 액션들을 예외로 처리
+  //     ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE', 'persist/REGISTER'],
+  //   },
+  // }),
 });
 
 const persistor = persistStore(store);

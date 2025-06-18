@@ -30,6 +30,10 @@ export const ImageUploadStyled = styled.div`
       }
     }
   }
+  .writeBoardBtn {
+    display: flex;
+    justify-content: center;
+  }
   .loadingBox {
     display: flex;
     justify-content: center;
