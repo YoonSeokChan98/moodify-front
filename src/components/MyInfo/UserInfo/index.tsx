@@ -1,32 +1,47 @@
 import { store } from '@/redux/store';
 import { UserInfoStyled } from './styled';
 import { Button } from 'antd';
+import { useRouter } from 'next/router';
+import { UserStateType, UserType } from '@/types';
 
-const UserInfo = () => {
-  const userName = store.getState().user.userInfo?.userName;
-  const userMembershipStatus = store.getState().user.userInfo?.userMembershipStatus;
+interface UserInfoProps {
+  user: UserType | null;
+}
+
+const UserInfo = ({ user }: UserInfoProps) => {
+  const router = useRouter();
+  const userName = user?.userName;
+  const userMembershipStatus = user?.userMembershipStatus;
+  const userId = user?.userId;
 
   const handleUpdateMyInfo = () => {
-    alert('개발중');
+    alert('개발 중');
   };
 
   return (
     <UserInfoStyled>
       <div className="userInfoWrap">
-        <div className="title">내 정보</div>
+        {/* <div className="title">내 정보</div> */}
+
         <div className="userInfoContent">
+          {/* 이미지 & 유저 정보 */}
           <div className="userInfoBox">
             {/* 이미지 */}
             <div className="userInfoImage">이미지</div>
+
             {/* 유저 정보 */}
             <div className="userInfo">
               <div className="userName">{userName}</div>
-              <div>{userMembershipStatus}</div>
+              <div>
+                {/* 구독제 관련 페이지로 넘어가게 변경하기 */}
+                <Button onClick={handleUpdateMyInfo}>{userMembershipStatus}</Button>
+              </div>
             </div>
           </div>
+
           {/* 유저정보 변경 버튼 */}
           <div className="reMyInfoBtn">
-            <Button onClick={handleUpdateMyInfo}>내정보 변경</Button>
+            <Button onClick={() => router.push(`/my_edit_info/${userId}`)}>내정보 변경</Button>
           </div>
         </div>
       </div>

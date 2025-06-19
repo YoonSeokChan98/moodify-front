@@ -31,6 +31,16 @@ export interface UserStateType {
   } | null;
 }
 
+// user
+export interface UserType {
+  userId: Number;
+  userName: string;
+  userEmail: string;
+  userRole: string;
+  userToken: string;
+  userMembershipStatus: string;
+}
+
 // 이미지 url
 export interface ImageType {
   imageSrc: string | null;
@@ -64,9 +74,24 @@ export interface EmotionDiaryType {
 }
 
 export interface getReduxEmotionType {
-  getReduxEmotion: string | number
+  getReduxEmotion: string | number;
 }
 
-export interface emotionQuestionsType {
-  
+// 감정데이터
+export interface EmotionData {
+  neutral: number;
+  happy: number;
+  sad: number;
+  angry: number;
+  fearful: number;
+  disgusted: number;
+  surprised: number;
+  createdAt: string;
+}
+
+// 유저 정보 수정
+export interface EditUserInfo {
+  userId: Number | undefined;
+  userName: string;
+  userEmail: string;
 }

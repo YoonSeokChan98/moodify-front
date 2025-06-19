@@ -33,7 +33,14 @@ export const userSlice = createSlice({
     },
     logOut: (state) => {
       state.isLoggedIn = false;
-      state.userInfo = null;
+      state.userInfo = {
+        userId: 0,
+        userName: '',
+        userEmail: '',
+        userRole: '',
+        userMembershipStatus: '',
+        userToken: '',
+      };
     },
   },
 });
