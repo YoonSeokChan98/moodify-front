@@ -4,20 +4,21 @@ import { useRouter } from 'next/router';
 import { Button, Input } from 'antd';
 import { ValidateType } from '@/types';
 import Password from 'antd/es/input/Password';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { apiPostLogin } from '@/pages/api/userApi';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import { loginSuccess } from '@/redux/slices/userSlices';
 import Cookies from 'js-cookie';
+import { websiteTitle } from '@/assets';
 
 const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
   // 로딩 상태
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const formInitialValues = {
     userEmail: '',
@@ -31,12 +32,12 @@ const Login = () => {
         errors.userEmail = '유효하지 않는 이메일 주소입니다.';
       }
       return errors;
-      },
-      onSubmit: async (values) => {
-        const { userEmail, userPassword } = values;
-        try {
-          setIsLoading(true);
-          const response = await apiPostLogin({ userEmail, userPassword });
+    },
+    onSubmit: async (values) => {
+      const { userEmail, userPassword } = values;
+      try {
+        // setIsLoading(true);
+        const response = await apiPostLogin({ userEmail, userPassword });
         loginFormik.resetForm();
 
         if (response.result === false) {
@@ -61,10 +62,11 @@ const Login = () => {
               userToken: response.token,
             })
           );
+
           const name = response.data.name;
           toast.success(`${name}님 어서오세요.`);
           router.push('/');
-          setIsLoading(false);
+          // setIsLoading(false);
         } else {
           toast.error(response.message);
         }
@@ -74,17 +76,15 @@ const Login = () => {
     },
   });
 
-  const errorEmailMessage =
-    loginFormik.touched && loginFormik.errors.userEmail ? (
-      <div className="errorMessage">{loginFormik.errors.userEmail}</div>
-    ) : (
-      <></>
-    );
+  const errorEmailMessage = loginFormik.touched && loginFormik.errors.userEmail && (
+    <div className="errorMessage">{loginFormik.errors.userEmail}</div>
+  );
+
   return (
     <LoginStyled>
       <form className="loginWrap" onSubmit={loginFormik.handleSubmit}>
         <div className="loginTextBox">
-          <div className="loginTitleText">Moodify</div>
+          <div className="loginTitleText">{websiteTitle}</div>
           <div className="loginSmallText">감정을 기록하다.</div>
         </div>
 
@@ -107,8 +107,13 @@ const Login = () => {
           />
         </div>
 
-        <div>
-          <Button htmlType="submit">로그인</Button>
+        <div className="actionButtons">
+          <Button className="primaryButton" htmlType="submit">
+            로그인
+          </Button>
+          <div className="secondaryButton" onClick={() => router.push(`/my_find_password`)}>
+            비밀번호를 잃어버리셨나요?
+          </div>
         </div>
       </form>
     </LoginStyled>

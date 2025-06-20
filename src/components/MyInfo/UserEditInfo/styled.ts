@@ -4,33 +4,27 @@ export const UserEditInfoStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* 화면 세로 중앙 정렬 */
+  min-height: 100vh;
 
   .userEditInfoWrap {
     width: 100%;
     max-width: 400px;
-    border-radius: 20px; /* 둥근 모서리 */
-    padding: 40px 30px; /* 내부 여백 */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    border-radius: 20px; 
+    padding: 40px 30px; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
     display: flex;
     flex-direction: column;
-    gap: 20px; /* 섹션 간의 간격 */
+    gap: 20px; 
     align-items: stretch;
 
     .editTitleBox {
-      text-align: center; /* 제목 텍스트 중앙 정렬 */
+      text-align: center;
       margin-bottom: 10px;
-
-      .editPageTitle {
-        font-size: 26px;
-        font-weight: 700;
-        color: #333333;
-        margin-bottom: 5px;
+      .editTitleText {
+        font-size: 30px;
+        font-weight: 800;
       }
-
-      .editPageSubtitle {
-        font-size: 14px;
-        font-weight: 400;
+      .editSmallText {
         color: #939393;
       }
     }

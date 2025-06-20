@@ -12,6 +12,7 @@ import "nprogress/nprogress.css";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PersistGate } from 'redux-persist/integration/react';
+import { websiteTitle } from '@/assets';
 
 export default function App({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Moodify</title>
+        <title>{websiteTitle}</title>
       </Head>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>

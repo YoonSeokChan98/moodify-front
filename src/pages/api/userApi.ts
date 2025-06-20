@@ -10,7 +10,7 @@ export const apiPostSignup = async (userData: SignupType) => {
     const response = await axios.post(`${API_URL}/signup`, userData);
     return response.data;
   } catch (error) {
-    console.error(`에러: ${error}`);
+    console.error(`API 에러: ${error}`);
   }
 };
 
@@ -20,7 +20,7 @@ export const apiPostLogin = async (userData: LoginType) => {
     const response = await axios.post(`${API_URL}/login`, userData);
     return response.data;
   } catch (error) {
-    console.error(`에러: ${error}`);
+    console.error(`API 에러: ${error}`);
   }
 };
 
@@ -30,7 +30,7 @@ export const apiGetOneUserInfo = async (userId: string | string[] | undefined) =
     const response = await axios.get(`${API_URL}/get-one-user-info`, { params: { userId } });
     return response.data;
   } catch (error) {
-    console.error(`에러: ${error}`);
+    console.error(`API 에러: ${error}`);
   }
 };
 
@@ -38,10 +38,9 @@ export const apiGetOneUserInfo = async (userId: string | string[] | undefined) =
 export const apiPatchUpdateUserInfo = async (userData: EditUserInfo) => {
   try {
     const response = await axios.patch(`${API_URL}/update-user-info`, userData);
-    console.log('🚀 ~ apiPatchUpdateUserInfo ~ response:', response);
     return response.data;
   } catch (error) {
-    console.error(`에러: ${error}`);
+    console.error(`API 에러: ${error}`);
   }
 };
 
@@ -51,6 +50,34 @@ export const apiPatchRemoveUser = async (id: string | string[] | undefined) => {
     const response = await axios.patch(`${API_URL}/remove-user`, { userId: id });
     return response.data;
   } catch (error) {
-    console.error(`에러: ${error}`);
+    console.error(`API 에러: ${error}`);
+  }
+};
+
+// 유저 비밀번호 변경
+export const apiPatchUpdatePassword = async (
+  id: string | string[] | undefined,
+  userLegacyPassword: string,
+  userNewPassword: string
+) => {
+  try {
+    const response = await axios.patch(`${API_URL}/update-user-password`, {
+      userId: id,
+      userLegacyPassword,
+      userNewPassword,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
+  }
+};
+
+// 유저 비밀번호 변경
+export const apiPatchResetPassword = async (userEmail: string, userPassword: string) => {
+  try {
+    const response = await axios.patch(`${API_URL}/reset-user-password`, { userEmail, userPassword });
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
   }
 };

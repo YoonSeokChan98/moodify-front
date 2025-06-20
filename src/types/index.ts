@@ -1,8 +1,8 @@
 // 회원가입 / 로그인 검증
 export interface ValidateType {
   userEmail?: string;
-  // userPassword?: string;
   userPasswordConfirm?: string;
+  userNewPasswordConfirm?: string;
 }
 
 // 회원가입

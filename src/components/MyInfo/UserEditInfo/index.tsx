@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import { logOut, loginSuccess } from '@/redux/slices/userSlices';
 import Cookies from 'js-cookie';
+import { websiteTitle } from '@/assets';
 
 const UserEditInfo = () => {
   const router = useRouter();
@@ -81,8 +82,8 @@ const UserEditInfo = () => {
     <UserEditInfoStyled>
       <form className="userEditInfoWrap" onSubmit={userEditInfoFormik.handleSubmit}>
         <div className="editTitleBox">
-          <div className="editPageTitle">내 정보 수정</div>
-          <div className="editPageSubtitle">정보를 수정 후 저장하세요.</div>
+          <div className="editTitleText">{websiteTitle}</div>
+          <div className="editSmallText">감정을 기록하다.</div>
         </div>
 
         <div className="formGroup">
@@ -93,6 +94,7 @@ const UserEditInfo = () => {
             value={userEditInfoFormik.values.userName}
             onChange={userEditInfoFormik.handleChange}
             placeholder="닉네임"
+            required
           />
           <Input
             className="inputField"
@@ -101,6 +103,7 @@ const UserEditInfo = () => {
             value={userEditInfoFormik.values.userEmail}
             onChange={userEditInfoFormik.handleChange}
             placeholder="이메일"
+            required
           />
         </div>
 

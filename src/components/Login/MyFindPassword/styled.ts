@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 
-export const LoginStyled = styled.div`
+export const MyFindPasswordStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-
-  .loginWrap {
+  .findPasswordWrap {
     width: 100%;
     max-width: 400px;
     border-radius: 20px;
@@ -16,20 +15,17 @@ export const LoginStyled = styled.div`
     flex-direction: column;
     gap: 20px;
     align-items: stretch;
-
-    .loginTextBox {
-      .loginTitleText {
+    .findPasswordTextBox {
+      .findPasswordTitleText {
         font-size: 30px;
         font-weight: 800;
       }
-      .loginSmallText {
+      .findPasswordSmallText {
         color: #939393;
       }
     }
+
     .actionButtons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
       button {
         width: 100%;
         height: 45px;
@@ -49,13 +45,6 @@ export const LoginStyled = styled.div`
             background-color: #004494;
           }
         }
-      }
-      .secondaryButton {
-        margin: 0 auto;
-        text-align: center;
-        font-size: 12px;
-        color: #939393;
-        cursor: pointer;
       }
     }
 

@@ -33,8 +33,7 @@ const UserInfo = ({ user }: UserInfoProps) => {
             <div className="userInfo">
               <div className="userName">{userName}</div>
               <div>
-                {/* 구독제 관련 페이지로 넘어가게 변경하기 */}
-                <Button onClick={handleUpdateMyInfo}>{userMembershipStatus}</Button>
+                <Button onClick={() => router.push('/membership_info')}>{userMembershipStatus}</Button>
               </div>
             </div>
           </div>

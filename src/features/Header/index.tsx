@@ -8,18 +8,20 @@ import { logOut } from '@/redux/slices/userSlices';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { removeEmotions } from '@/redux/slices/emotionSlices';
+import { websiteTitle } from '@/assets';
 
 const Header = () => {
   const router = useRouter();
   const [loginUser, setLoginUser] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const name = store.getState().user.userInfo?.userName;
+  const membership = store.getState().user.userInfo?.userMembershipStatus;
+  const role = store.getState().user.userInfo?.userRole;
 
-  // 로고
-  const logoObj = 'Moodify';
   const clickLogo = () => {
     router.push('/');
   };
-  // 미구현 기능 알림창
+  // test 미구현 기능 알림창
   const clickDevelopAlert = () => {
     alert('현재 개발 중입니다.');
   };
@@ -50,7 +52,6 @@ const Header = () => {
     dispatch(removeEmotions());
   };
 
-  const name = store.getState().user.userInfo?.userName;
   const loginStatus = loginUser ? (
     <>
       <div className="headerUserName" onClick={() => router.push('/my_info')}>
@@ -69,12 +70,12 @@ const Header = () => {
     <HeaderStyled>
       <div className="headerWrap">
         <div className="headerLogo">
-          <div onClick={() => clickLogo()}>{logoObj}</div>
+          <div onClick={() => clickLogo()}>{websiteTitle}</div>
         </div>
         <div className="headerNavBar">
+          {role === 'admin' && <Button onClick={() => clickDevelopAlert()}>관리자 페이지</Button>}
           <Button onClick={() => onclickEmotionExtraction()}>감정 분석</Button>
-          <Button onClick={() => clickDevelopAlert()}>메뉴버튼</Button>
-          <Button onClick={() => clickDevelopAlert()}>메뉴버튼</Button>
+          <Button onClick={() => router.push('/membership_info')}>멤버십</Button>
         </div>
         <div className="headerAuthBar">{loginStatus}</div>
       </div>

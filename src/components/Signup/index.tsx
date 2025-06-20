@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import { SignupStyled } from './styled';
 import { useRouter } from 'next/router';
-import { Alert, Button, Input, Spin } from 'antd';
+import { Button, Input, Spin } from 'antd';
 import Password from 'antd/es/input/Password';
 import { useEffect, useState } from 'react';
 
@@ -9,6 +9,7 @@ import { apiSendAuthNumberEmail } from '@/pages/api/nodemailerApi';
 import { apiPostSignup } from '@/pages/api/userApi';
 import { ValidateType } from '@/types';
 import { toast } from 'react-toastify';
+import { websiteTitle } from '@/assets';
 
 const Signup = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const Signup = () => {
   // 이메일 인증 완료 여부
   const [isAuthStatus, setIsAuthStatus] = useState(false);
 
-  // 로그 찍는용 나중에 꼭 지워야함~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // test 로그 찍는용 나중에 꼭 지워야함~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   useEffect(() => {
     console.log('🚀 ~ Signup ~ authNumber:', authNumber);
   }, [authNumber]);
@@ -46,8 +47,8 @@ const Signup = () => {
       return errors;
     },
     onSubmit: async (values) => {
-      const { userName, userEmail, userPassword } = values;
       try {
+        const { userName, userEmail, userPassword } = values;
         setIsLoading(true);
         const response = await apiPostSignup({ userName, userEmail, userPassword });
         signupFormik.resetForm();
@@ -65,17 +66,12 @@ const Signup = () => {
   });
 
   // 에러메시지
-  const errorEmailMessage =
-    signupFormik.touched.userEmail && signupFormik.errors.userEmail ? (
-      <div className="errorMessage">{signupFormik.errors.userEmail}</div>
-    ) : (
-      <></>
-    );
-  const errorPasswordConfirmMessage =
-    signupFormik.touched.userPasswordConfirm && signupFormik.errors.userPasswordConfirm ? (
+  const errorEmailMessage = signupFormik.touched.userEmail && signupFormik.errors.userEmail && (
+    <div className="errorMessage">{signupFormik.errors.userEmail}</div>
+  );
+  const errorPasswordConfirmMessage = signupFormik.touched.userPasswordConfirm &&
+    signupFormik.errors.userPasswordConfirm && (
       <div className="errorMessage">{signupFormik.errors.userPasswordConfirm}</div>
-    ) : (
-      <></>
     );
 
   // 이메일 인증 요청
@@ -115,7 +111,7 @@ const Signup = () => {
     <SignupStyled>
       <form className="signupWrap" onSubmit={signupFormik.handleSubmit}>
         <div className="signupTextBox">
-          <div className="signupTitleText">Moodify</div>
+          <div className="signupTitleText">{websiteTitle}</div>
           <div className="signupSmallText">감정을 기록하다.</div>
         </div>
         <div className="signupUsername">
@@ -148,19 +144,15 @@ const Signup = () => {
           )}
 
           {errorEmailMessage}
-          {isAuthNumber ? (
-            <></>
-          ) : (
+          {isAuthNumber || (
             <Button htmlType="button" onClick={handleSendAuthNumberEmail}>
               {isLoading ? <Spin size="small" /> : '인증받기'}
             </Button>
           )}
         </div>
-        {isAuthNumber ? (
+        {isAuthNumber && (
           <>
-            {isAuthStatus ? (
-              <></>
-            ) : (
+            {isAuthStatus || (
               <div className="signupUserAuthNumber">
                 <Input
                   placeholder="인증번호"
@@ -168,9 +160,7 @@ const Signup = () => {
                   onChange={signupFormik.handleChange}
                   value={signupFormik.values.userAuthNumber}
                 />
-                {isAuthStatus ? (
-                  <></>
-                ) : (
+                {isAuthStatus || (
                   <Button htmlType="button" onClick={handleVerifyAuthNumberEmail}>
                     인증하기
                   </Button>
@@ -178,9 +168,8 @@ const Signup = () => {
               </div>
             )}
           </>
-        ) : (
-          <></>
         )}
+
         <div className="signupUserPassword">
           <Password
             placeholder="비밀번호"
@@ -190,6 +179,7 @@ const Signup = () => {
             required
           />
         </div>
+
         <div className="signupUserPasswordConfirm">
           <Password
             placeholder="비밀번호 확인"
@@ -200,8 +190,9 @@ const Signup = () => {
           />
           {errorPasswordConfirmMessage}
         </div>
-        <div>
-          <Button htmlType="submit" disabled={!isAuthStatus}>
+
+        <div className="actionButtons">
+          <Button className="primaryButton" htmlType="submit" disabled={!isAuthStatus}>
             {isLoading ? <Spin size="small" /> : '회원가입'}
           </Button>
         </div>

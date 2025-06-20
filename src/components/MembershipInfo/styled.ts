@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const MainStyled = styled.div`
-  .mainWrap {
+export const MembershipInfoStyled = styled.div`
+  .MembershipInfoWrap {
     .websiteTextBox {
       margin-top: 10px;
       text-align: center;

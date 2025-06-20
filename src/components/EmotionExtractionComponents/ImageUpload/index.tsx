@@ -96,7 +96,7 @@ const ImageUpload = () => {
           faceApi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
           faceApi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
         ]);
-        console.log('모델 로드 성공');
+        // console.log('모델 로드 성공');
         // setLoading(false);
       } catch (error) {
         console.error('모델 로드 오류:', error);

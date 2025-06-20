@@ -1,22 +1,19 @@
 import { websiteTitle } from '@/assets';
-import { MainStyled } from './styled';
-import BoardList from '@/components/BoardComponent/BoardList';
+import { MembershipInfoStyled } from './styled';
 
-const Main = () => {
+const MembershipInfo = () => {
   return (
-    <MainStyled>
-      <div className="mainWrap">
+    <MembershipInfoStyled>
+      <div className="MembershipInfoWrap">
         <div className="websiteTextBox">
           <div className="websiteTitleText">{websiteTitle}</div>
           <div className="websiteSmallText">감정을 기록하다.</div>
         </div>
 
-        <div>
-          <BoardList />
-        </div>
+        <div>멤버십 페이지</div>
       </div>
-    </MainStyled>
+    </MembershipInfoStyled>
   );
 };
 
-export default Main;
+export default MembershipInfo;
