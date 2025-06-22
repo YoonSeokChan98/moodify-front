@@ -78,10 +78,20 @@ export const apiPatchRemoveBoard = async (id: string | string[] | undefined) => 
   }
 };
 
-// 좋아요 버튼 클릭
+// 좋아요
 export const apiLikedBoardPlus = async (idData: { boardId: Number; userId: Number }) => {
   try {
     const response = await axios.post(`${API_URL}/liked-board-plus`, { idData });
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
+  }
+};
+
+// 좋아요 취소
+export const apiLikedBoardMinus = async (idData: { boardId: Number; userId: Number }) => {
+  try {
+    const response = await axios.post(`${API_URL}/liked-board-minus`, { idData });
     return response.data;
   } catch (error) {
     console.error(`API 에러: ${error}`);

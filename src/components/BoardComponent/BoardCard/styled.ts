@@ -28,6 +28,11 @@ export const BoardCardStyled = styled.div`
       margin-bottom: 6px;
       color: #333;
     }
+    
+    .likedBox {
+      display: flex;
+      align-items: center;
+    }
 
     .cardAuthor {
       font-size: 14px;

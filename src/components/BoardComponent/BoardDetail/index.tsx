@@ -3,6 +3,7 @@ import { BoardDetailStyled } from './styled';
 import { useEffect, useMemo, useState } from 'react';
 import {
   apiGetOneBoard,
+  apiLikedBoardMinus,
   apiLikedBoardPlus,
   apiPatchRemoveBoard,
   apiPatchUpdateBoard,
@@ -12,6 +13,7 @@ import { store } from '@/redux/store';
 import { Button, Input, Switch } from 'antd';
 import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 // 에디터 관련
 import dynamic from 'next/dynamic';
@@ -33,44 +35,59 @@ const BoardDetail = () => {
   const [emotionUserPid, setEmotionUserPid] = useState('');
   const [userName, setUserName] = useState('');
   const [likeNumber, setLikeNumber] = useState(0);
-  const [liked, setLiked] = useState(false);
-  const [updateState, setUpdateState] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
   const userPid = store.getState().user.userInfo?.userId;
-  const idData = {
-    userId: Number(userPid),
-    boardId: Number(id),
-  };
+  const idData = { userId: Number(userPid), boardId: Number(id) };
 
   useEffect(() => {
     const getOneBoard = async () => {
       if (id) {
-        const boardData = await apiGetOneBoard(id);
-        if (boardData) {
-          setQuestion(boardData.data.question);
-          setTitle(boardData.data.title);
-          setContent(boardData.data.content);
-          setDate(boardData.data.createdAt);
-          boardData.data.visibilityStatus === 'public' ? setVisibility(true) : setVisibility(false);
-          setEmotionUserPid(boardData.data.userId);
-          setUserName(boardData.data.user.userName);
-          setLikeNumber(boardData.data.liked_boards.length);
-          const likedUserNumber = boardData.data.liked_boards.map((value: any) => value.userId);
-          if (likedUserNumber === boardData.id) setLiked(false);
+        try {
+          const boardData = await apiGetOneBoard(id);
+          if (boardData) {
+            // 게시글 데이터 설정
+            setQuestion(boardData.data.question);
+            setTitle(boardData.data.title);
+            setContent(boardData.data.content);
+            setDate(boardData.data.createdAt);
+            boardData.data.visibilityStatus === 'public' ? setVisibility(true) : setVisibility(false);
+            setEmotionUserPid(boardData.data.userId);
+            setUserName(boardData.data.user.userName);
+            setLikeNumber(boardData.data.liked_boards.length);
+
+            const likedUserNumberAry = boardData.data.liked_boards.map((value: any) => value.userId);
+            const isLikedStatus = likedUserNumberAry.filter((value: number) => value === userPid);
+            if (isLikedStatus.length > 0) setIsLiked(true);
+          }
+        } catch (error) {
+          console.error('게시글 불러오는 중 에러발생: ', error);
         }
       }
     };
     getOneBoard();
-  }, [id, liked]);
+  }, [id, isLiked]);
 
   // 좋아요 버튼
   const handleLikedBtn = async () => {
     try {
       const response = await apiLikedBoardPlus(idData);
       if ((response.result = true)) {
-        setLiked(true);
+        setIsLiked(true);
       }
     } catch (error) {
       console.error('게시글 좋아요 실패', error);
+    }
+  };
+  // 좋아요 취소 버튼
+  const handleReLikedBtn = async () => {
+    try {
+      const response = await apiLikedBoardMinus(idData);
+      if ((response.result = true)) {
+        setIsLiked(false);
+      }
+    } catch (error) {
+      console.error('게시글 좋아요 취소 실패', error);
     }
   };
 
@@ -174,7 +191,7 @@ const BoardDetail = () => {
         };
         const response = await apiPatchUpdateBoard(updateBoardData);
         if (response.result === false) return toast.error('수정을 실패했습니다. 다시 시도해 주세요');
-        setUpdateState(!true);
+        setIsUpdate(!true);
         toast.success('게시글을 수정했습니다.');
         router.push(`/board_detail/${id}`);
       } catch (error) {
@@ -204,7 +221,7 @@ const BoardDetail = () => {
     <BoardDetailStyled>
       <div className="boardDetailWrap">
         <form onSubmit={updateBoardFormik.handleSubmit}>
-          {updateState ? (
+          {isUpdate ? (
             <Input
               placeholder="제목을 입력해 주세요"
               id="title"
@@ -215,14 +232,16 @@ const BoardDetail = () => {
             <div className="title">{title}</div>
           )}
           <div className="likedBox">
-            {liked === true ? (
+            {isLiked === true ? (
               <>
-                <div>좋아요</div>
+                <div>
+                  <HeartFilled onClick={handleReLikedBtn} />
+                </div>
                 <div>{likeNumber}</div>
               </>
             ) : (
               <>
-                <Button onClick={handleLikedBtn}>좋아요</Button>
+                <HeartOutlined onClick={handleLikedBtn} />
                 <div>{likeNumber}</div>
               </>
             )}
@@ -230,7 +249,7 @@ const BoardDetail = () => {
           <div className="userName">작성자: {userName}</div>
           <div className="date">작성일: {date.split('T')[0]}</div>
           <div className="question">질문: {question}</div>
-          {updateState ? (
+          {isUpdate ? (
             <ReactQuill
               placeholder="오늘 하루를 기록해 보세요"
               theme="snow"
@@ -244,17 +263,17 @@ const BoardDetail = () => {
           ) : (
             <div className="content" dangerouslySetInnerHTML={{ __html: content }} />
           )}
-          {updateState || (
+          {isUpdate || (
             <>
               {userPid === Number(emotionUserPid) && (
                 <>
-                  <Button onClick={() => setUpdateState(true)}>수정</Button>
+                  <Button onClick={() => setIsUpdate(true)}>수정</Button>
                   <Button onClick={removeBoardBtn}>삭제</Button>
                 </>
               )}
             </>
           )}
-          {updateState && (
+          {isUpdate && (
             <div className="visibilityBox">
               <span>공개 여부:</span>
               <Switch
@@ -265,7 +284,7 @@ const BoardDetail = () => {
               />
             </div>
           )}
-          <div>{updateState && <Button htmlType="submit">저장하기</Button>}</div>
+          <div>{isUpdate && <Button htmlType="submit">저장하기</Button>}</div>
         </form>
       </div>
     </BoardDetailStyled>

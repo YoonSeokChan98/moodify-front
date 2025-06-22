@@ -98,11 +98,12 @@ export interface EditUserInfo {
 
 // 게시글 데이터
 export interface BoardData {
-  id: number
+  id: number;
   question: string;
   title: string;
   content: string;
   liked: number;
+  liked_boards: [];
   removeStatus: boolean;
   createdAt: string;
   emotion: {
