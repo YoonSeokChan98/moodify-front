@@ -95,3 +95,25 @@ export interface EditUserInfo {
   userName: string;
   userEmail: string;
 }
+
+// 게시글 데이터
+export interface BoardData {
+  id: number
+  question: string;
+  title: string;
+  content: string;
+  liked: number;
+  removeStatus: boolean;
+  createdAt: string;
+  emotion: {
+    neutral: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    createdAt: string;
+  };
+  user: any;
+}

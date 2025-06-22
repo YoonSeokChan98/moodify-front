@@ -1,7 +1,13 @@
 import { useRouter } from 'next/router';
 import { BoardDetailStyled } from './styled';
 import { useEffect, useMemo, useState } from 'react';
-import { apiGetOneBoard, apiPatchRemoveBoard, apiPatchUpdateBoard, apiPostUploadImageFile } from '@/pages/api/boardApi';
+import {
+  apiGetOneBoard,
+  apiLikedBoardPlus,
+  apiPatchRemoveBoard,
+  apiPatchUpdateBoard,
+  apiPostUploadImageFile,
+} from '@/pages/api/boardApi';
 import { store } from '@/redux/store';
 import { Button, Input, Switch } from 'antd';
 import { toast } from 'react-toastify';
@@ -26,36 +32,58 @@ const BoardDetail = () => {
   const [visibility, setVisibility] = useState(false);
   const [emotionUserPid, setEmotionUserPid] = useState('');
   const [userName, setUserName] = useState('');
-  console.log('🚀 ~ BoardDetail ~ userName:', userName);
-
+  const [likeNumber, setLikeNumber] = useState(0);
+  const [liked, setLiked] = useState(false);
   const [updateState, setUpdateState] = useState(false);
   const userPid = store.getState().user.userInfo?.userId;
+  const idData = {
+    userId: Number(userPid),
+    boardId: Number(id),
+  };
 
   useEffect(() => {
     const getOneBoard = async () => {
       if (id) {
         const boardData = await apiGetOneBoard(id);
-        console.log('🚀 ~ getOneBoard ~ boardData:', boardData);
         if (boardData) {
           setQuestion(boardData.data.question);
           setTitle(boardData.data.title);
           setContent(boardData.data.content);
           setDate(boardData.data.createdAt);
           boardData.data.visibilityStatus === 'public' ? setVisibility(true) : setVisibility(false);
-          setEmotionUserPid(boardData.data.emotion.userId);
-          setUserName(boardData.data.emotion.user.userName);
+          setEmotionUserPid(boardData.data.userId);
+          setUserName(boardData.data.user.userName);
+          setLikeNumber(boardData.data.liked_boards.length);
+          const likedUserNumber = boardData.data.liked_boards.map((value: any) => value.userId);
+          if (likedUserNumber === boardData.id) setLiked(false);
         }
       }
     };
     getOneBoard();
-  }, [id]);
+  }, [id, liked]);
+
+  // 좋아요 버튼
+  const handleLikedBtn = async () => {
+    try {
+      const response = await apiLikedBoardPlus(idData);
+      if ((response.result = true)) {
+        setLiked(true);
+      }
+    } catch (error) {
+      console.error('게시글 좋아요 실패', error);
+    }
+  };
 
   // 삭제 버튼
   const removeBoardBtn = async () => {
-    const response = await apiPatchRemoveBoard(id);
-    if (response.result === true) {
-      toast.success('게시글이 삭제되었습니다.');
-      router.push('/');
+    try {
+      const response = await apiPatchRemoveBoard(id);
+      if (response.result === true) {
+        toast.success('게시글이 삭제되었습니다.');
+        router.push('/');
+      }
+    } catch (error) {
+      console.error('게시글 삭제 실패', error);
     }
   };
 
@@ -186,6 +214,19 @@ const BoardDetail = () => {
           ) : (
             <div className="title">{title}</div>
           )}
+          <div className="likedBox">
+            {liked === true ? (
+              <>
+                <div>좋아요</div>
+                <div>{likeNumber}</div>
+              </>
+            ) : (
+              <>
+                <Button onClick={handleLikedBtn}>좋아요</Button>
+                <div>{likeNumber}</div>
+              </>
+            )}
+          </div>
           <div className="userName">작성자: {userName}</div>
           <div className="date">작성일: {date.split('T')[0]}</div>
           <div className="question">질문: {question}</div>

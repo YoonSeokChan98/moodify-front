@@ -20,6 +20,7 @@ import {
 import 'chartjs-adapter-date-fns';
 import { ko } from 'date-fns/locale';
 import { EmotionData } from '@/types';
+import { useEffect } from 'react';
 // 차트 기능 등록
 ChartJS.register(LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, Filler);
 

@@ -25,7 +25,12 @@ export const BoardDetailStyled = styled.div`
       margin-bottom: 10px;
     }
 
-    .userName{
+    .likedBox {
+      display: flex;
+      align-items: center;
+    }
+
+    .userName {
       font-size: 14px;
       color: #666;
       margin-bottom: 6px;
