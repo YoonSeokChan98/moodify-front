@@ -72,7 +72,7 @@ const BoardDetail = () => {
   const handleLikedBtn = async () => {
     try {
       const response = await apiLikedBoardPlus(idData);
-      if ((response.result = true)) {
+      if (response.result === true) {
         setIsLiked(true);
       }
     } catch (error) {
@@ -83,7 +83,7 @@ const BoardDetail = () => {
   const handleReLikedBtn = async () => {
     try {
       const response = await apiLikedBoardMinus(idData);
-      if ((response.result = true)) {
+      if (response.result === true) {
         setIsLiked(false);
       }
     } catch (error) {
@@ -94,10 +94,12 @@ const BoardDetail = () => {
   // 삭제 버튼
   const removeBoardBtn = async () => {
     try {
-      const response = await apiPatchRemoveBoard(id);
-      if (response.result === true) {
-        toast.success('게시글이 삭제되었습니다.');
-        router.push('/');
+      if (confirm('삭제하시겠습니까?') === true) {
+        const response = await apiPatchRemoveBoard(id);
+        if (response.result === true) {
+          toast.success('게시글이 삭제되었습니다.');
+          router.push('/');
+        }
       }
     } catch (error) {
       console.error('게시글 삭제 실패', error);

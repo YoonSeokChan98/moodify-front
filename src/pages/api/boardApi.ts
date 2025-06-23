@@ -97,3 +97,13 @@ export const apiLikedBoardMinus = async (idData: { boardId: Number; userId: Numb
     console.error(`API 에러: ${error}`);
   }
 };
+
+// 내가 작성한 게시글 가져오기
+export const apiGetMyAllBoard = async (userId: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/get-my-all-board`, { params: { userId } });
+    return response.data;
+  } catch (error) {
+    console.error(`API 에러: ${error}`);
+  }
+};

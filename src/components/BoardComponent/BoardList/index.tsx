@@ -25,7 +25,7 @@ const BoardList = () => {
         {posts?.length > 0 ? (
           posts.map((x, i) => <BoardCard key={i} item={x} />)
         ) : (
-          <div className="emptyMessage">게시글이 없습니다.</div>
+          <div className="emptyMessage">작성된 게시글이 없습니다.</div>
         )}
       </div>
     </BoardListStyled>

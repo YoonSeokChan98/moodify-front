@@ -29,13 +29,15 @@ const UserEditPassword = () => {
     onSubmit: async (values) => {
       try {
         const { userLegacyPassword, userNewPassword } = values;
-        const response = await apiPatchUpdatePassword(id, userLegacyPassword, userNewPassword);
-        if (response.result === false) {
-          return toast.error(response.message);
+        if (confirm('비밀번호를 변경하시겠습니까?') === true) {
+          const response = await apiPatchUpdatePassword(id, userLegacyPassword, userNewPassword);
+          if (response.result === false) {
+            return toast.error(response.message);
+          }
+          toast.success(response.message);
+          editPasswordFormik.resetForm();
+          router.push('/my_info');
         }
-        toast.success(response.message);
-        editPasswordFormik.resetForm();
-        router.push('/my_info');
       } catch (error) {
         console.error(`비밀번호 변경 에러: ${error}`);
       }

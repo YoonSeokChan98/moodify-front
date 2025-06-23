@@ -28,14 +28,17 @@ const UserEditInfo = () => {
     getUserInfo(id);
   }, [id]);
 
+  // 회원 탈퇴
   const handleDeleteAccount = async () => {
     try {
-      const response = await apiPatchRemoveUser(id);
-      if (response.result === true) {
-        Cookies.remove('userToken');
-        dispatch(logOut());
-        alert('지금까지 저희 플랫폼을 사랑해주셔서 감사합니다.');
-        router.push('/');
+      if (confirm('정말로 회원을 탈퇴하시나요?') === true) {
+        const response = await apiPatchRemoveUser(id);
+        if (response.result === true) {
+          Cookies.remove('userToken');
+          dispatch(logOut());
+          alert('지금까지 저희 플랫폼을 사랑해주셔서 감사합니다.');
+          router.push('/');
+        }
       }
     } catch (error) {}
   };

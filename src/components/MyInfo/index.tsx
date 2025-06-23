@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { EmotionData } from '@/types';
 import { store } from '@/redux/store';
 import { apiGetAllUserBoard } from '@/pages/api/boardApi';
+import UserBoardList from './UserBoardList';
 
 const MyInfo = () => {
   const [boards, setBoards] = useState([]);
@@ -57,7 +58,12 @@ const MyInfo = () => {
     <MyInfoStyled>
       <div className="myInfoWrap">
         <UserInfo user={user} />
+        {/* 
+        1. 스와이프 적용해서 여러 형태로 그래프 보여주기 
+        2. 그래프 날짜 누르면 해당 글로 이동하기 (추가: 게시글에서 그래프 작게 보여주기)
+        */}
         <UserEmotionChart emotions={emotions} />
+        <UserBoardList />
       </div>
     </MyInfoStyled>
   );

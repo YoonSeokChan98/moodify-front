@@ -12,8 +12,9 @@ export const UserEmotionChartStyled = styled.div`
     }
     .emotionChart {
       /* border: 1px solid; */
-      width: 70%;
+      width: 100%;
       height: 400px;
+      /* margin: 0 auto; */
     }
   }
 `;
