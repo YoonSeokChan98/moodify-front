@@ -10,10 +10,7 @@ const Main = () => {
           <div className="websiteTitleText">{websiteTitle}</div>
           <div className="websiteSmallText">감정을 기록하다.</div>
         </div>
-
-        <div>
-          <BoardList />
-        </div>
+        <BoardList />
       </div>
     </MainStyled>
   );

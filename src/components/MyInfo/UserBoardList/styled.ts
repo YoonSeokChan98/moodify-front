@@ -25,4 +25,10 @@ export const UserBoardListStyled = styled.div`
       padding: 60px 0;
     }
   }
+  .moreBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+  }
 `;

@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
-export const BoardListStyled = styled.div`
+export const AllBoardListStyled = styled.div`
   padding: 40px 20px;
   min-height: 100vh;
-
-  .boardListWrap {
+  .allBoardListWrap {
     .title {
       text-align: center;
       font-size: 40px;
@@ -18,18 +17,5 @@ export const BoardListStyled = styled.div`
       max-width: 1200px;
       margin: 0 auto;
     }
-    .moreBtn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 20px;
-    }
-  }
-
-  .emptyMessage {
-    text-align: center;
-    font-size: 18px;
-    color: #999;
-    padding: 60px 0;
   }
 `;

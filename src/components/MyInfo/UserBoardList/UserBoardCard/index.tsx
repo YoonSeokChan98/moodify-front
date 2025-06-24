@@ -6,6 +6,7 @@ import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 const UserBoardCard = ({ item }: { item: any }) => {
   const post = item;
+  // console.log('🚀 ~ UserBoardCard ~ post:', post);
   const router = useRouter();
   const [likeNumber, setLikeNumber] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
