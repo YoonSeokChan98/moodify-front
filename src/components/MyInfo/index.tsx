@@ -10,9 +10,7 @@ import UserBoardList from './UserBoardList';
 
 const MyInfo = () => {
   const [boards, setBoards] = useState([]);
-  // console.log('🚀 ~ MyInfo ~ boards:', boards);
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
-  // console.log('🚀 ~ MyInfo ~ emotions:', emotions);
   const user = store.getState().user.userInfo;
   const userId = user?.userId;
 
@@ -60,7 +58,7 @@ const MyInfo = () => {
         <UserInfo user={user} />
         {/* 
         1. 스와이프 적용해서 여러 형태로 그래프 보여주기 
-        2. 그래프 날짜 누르면 해당 글로 이동하기 (추가: 게시글에서 그래프 작게 보여주기)
+        2. 그래프 날짜 누르면 해당 글로 이동하기
         */}
         <UserEmotionChart emotions={emotions} />
         <UserBoardList />

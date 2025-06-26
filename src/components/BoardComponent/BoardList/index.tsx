@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { BoardListStyled } from './styled';
 import { apiGetAllBoard } from '@/pages/api/boardApi';
 import BoardCard from '../BoardCard';
-import PaginationComponent from '@/components/PaginationComponent';
 import { useRouter } from 'next/router';
 import { Button } from 'antd';
 
 const BoardList = () => {
   const [posts, setPosts] = useState([]);
-  console.log('🚀 ~ BoardList ~ posts:', posts);
+  // console.log('🚀 ~ BoardList ~ posts:', posts);
   const router = useRouter();
 
   useEffect(() => {

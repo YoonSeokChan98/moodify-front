@@ -22,6 +22,7 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 // @ts-ignore
 import ImageResize from 'quill-image-resize';
+import UserEmotionChart from '@/components/EmotionExtractionComponents/UserEmotionChart';
 Quill.register('modules/ImageResize', ImageResize);
 
 const BoardDetail = () => {
@@ -37,6 +38,7 @@ const BoardDetail = () => {
   const [likeNumber, setLikeNumber] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [emotions, setEmotions] = useState({});
   const userPid = store.getState().user.userInfo?.userId;
   const idData = { userId: Number(userPid), boardId: Number(id) };
 
@@ -45,6 +47,7 @@ const BoardDetail = () => {
       if (id) {
         try {
           const boardData = await apiGetOneBoard(id);
+          // console.log('🚀 ~ getOneBoard ~ boardData:', boardData);
           if (boardData) {
             // 게시글 데이터 설정
             setQuestion(boardData.data.question);
@@ -55,6 +58,16 @@ const BoardDetail = () => {
             setEmotionUserPid(boardData.data.userId);
             setUserName(boardData.data.user.userName);
             setLikeNumber(boardData.data.liked_boards.length);
+            const emotionData = {
+              angry: boardData.data.emotion.angry,
+              disgusted: boardData.data.emotion.disgusted,
+              fearful: boardData.data.emotion.fearful,
+              happy: boardData.data.emotion.happy,
+              neutral: boardData.data.emotion.neutral,
+              sad: boardData.data.emotion.sad,
+              surprised: boardData.data.emotion.surprised,
+            };
+            setEmotions(emotionData);
 
             const likedUserNumberAry = boardData.data.liked_boards.map((value: any) => value.userId);
             const isLikedStatus = likedUserNumberAry.filter((value: number) => value === userPid);
@@ -256,6 +269,7 @@ const BoardDetail = () => {
               placeholder="오늘 하루를 기록해 보세요"
               theme="snow"
               modules={modules}
+              className='reactQuill'
               id="content"
               onChange={(value: string) => {
                 updateBoardFormik.setFieldValue('content', value);
@@ -265,6 +279,7 @@ const BoardDetail = () => {
           ) : (
             <div className="content" dangerouslySetInnerHTML={{ __html: content }} />
           )}
+          <UserEmotionChart emotions={emotions} />
           {isUpdate || (
             <>
               {userPid === Number(emotionUserPid) && (

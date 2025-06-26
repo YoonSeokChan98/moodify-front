@@ -24,7 +24,7 @@ export const userSlice = createSlice({
         userName: string;
         userEmail: string;
         userRole: string;
-        userMembershipStatus: string;
+        userMembershipStatus: any;
         userToken: string;
       }>
     ) => {

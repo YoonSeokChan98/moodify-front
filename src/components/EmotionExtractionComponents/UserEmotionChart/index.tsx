@@ -8,10 +8,11 @@ import { store } from '@/redux/store';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const UserEmotionChart = () => {
+const UserEmotionChart = ({emotions}: any) => {
+  // console.log("🚀 ~ UserEmotionChart ~ emotions:", emotions)
   // const cookie = Cookies.get('userToken');
 
-  const emotions = store.getState().emotions.emotions;
+  // const emotions = store.getState().emotions.emotions;
   const [labels, setLabels] = useState<string[]>([]);
   const [data, setData] = useState<number[]>([]);
   const colors = [

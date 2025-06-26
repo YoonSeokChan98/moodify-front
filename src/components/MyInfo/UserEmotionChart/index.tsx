@@ -8,7 +8,8 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 // 날짜 축을 사용하려면 필요함
 import 'chartjs-adapter-date-fns';
 import { EmotionData } from '@/types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { store } from '@/redux/store';
 // 차트 기능 등록
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, TimeScale);
 
@@ -18,21 +19,8 @@ interface UserEmotionChartProps {
 
 const UserEmotionChart = (props: UserEmotionChartProps) => {
   const { emotions } = props;
-
-  // useEffect(() => {
-  //   console.log(
-  //     'emotions with time:',
-  //     emotions.map((e) => ({
-  //       createdAt: e.createdAt,
-  //       parsed: new Date(e.createdAt),
-  //       timestamp: new Date(e.createdAt).getTime(),
-  //     }))
-  //   );
-  // }, [emotions]);
-
-  // useEffect(() => {
-  //   console.log('emotions:', emotions);
-  // }, [emotions]);
+  const user = store.getState().user?.userInfo;
+  const membership = user?.userMembershipStatus.membershipName;
 
   const formDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString('ko-KR', {
@@ -42,8 +30,20 @@ const UserEmotionChart = (props: UserEmotionChartProps) => {
       hour: '2-digit',
       minute: '2-digit',
     });
+
+  const now = new Date();
+  const isPremium = membership === 'premium';
+
+  // 날짜 오름차순 정렬 및 필터링 // 이거 다시 공부하기
+  const filteredEmotions = emotions.filter((e) => {
+    if (isPremium) return true;
+    const createdAt = new Date(e.createdAt);
+    const sevenDaysLater = new Date(createdAt);
+    sevenDaysLater.setDate(createdAt.getDate() + 7);
+    return sevenDaysLater >= now;
+  });
   // 날짜 오름차순 정렬
-  const sortedEmotions = [...emotions].sort(
+  const sortedEmotions = [...filteredEmotions].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
   const labels = sortedEmotions.map((e) => formDate(e.createdAt));

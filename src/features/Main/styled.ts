@@ -2,17 +2,5 @@ import styled from 'styled-components';
 
 export const MainStyled = styled.div`
   .mainWrap {
-    .websiteTextBox {
-      margin-top: 10px;
-      text-align: center;
-      .websiteTitleText {
-        font-size: 80px;
-        font-weight: bolder;
-      }
-      .websiteSmallText {
-        font-size: 15px;
-        color: #939393;
-      }
-    }
   }
 `;

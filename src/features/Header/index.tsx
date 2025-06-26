@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, store } from '@/redux/store';
-import { logOut } from '@/redux/slices/userSlices';
+import { logOut, loginSuccess } from '@/redux/slices/userSlices';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { removeEmotions } from '@/redux/slices/emotionSlices';
@@ -14,9 +14,11 @@ const Header = () => {
   const router = useRouter();
   const [loginUser, setLoginUser] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const name = store.getState().user.userInfo?.userName;
-  const membership = store.getState().user.userInfo?.userMembershipStatus;
-  const role = store.getState().user.userInfo?.userRole;
+  const user = store.getState().user.userInfo;
+  const name = user?.userName;
+  const membership = user?.userMembershipStatus;
+  // console.log('🚀 ~ Header ~ membership:', membership);
+  const role = user?.userRole;
 
   const clickLogo = () => {
     router.push('/');
@@ -37,6 +39,35 @@ const Header = () => {
     }
   }, [cookie]);
 
+  // 멤버십 확인
+  useEffect(() => {
+    // const fakeMembership = {
+    //   membershipName: 'premium',
+    //   startDate: '2024-06-01',
+    //   endDate: '2024-06-02', // 과거로 설정
+    // };
+
+    if (membership.membershipName === 'premium') {
+      const now = new Date();
+      const end = new Date(membership.endDate);
+      console.log('⏰ now:', now.toISOString());
+      console.log('🏁 endDate:', end.toISOString());
+      if (now.getTime() > end.getTime()) {
+        alert('멤버십 기간이 만료되었습니다.');
+        dispatch(
+          loginSuccess({
+            userId: user?.userId || 0,
+            userName: user?.userName || '',
+            userEmail: user?.userEmail || '',
+            userRole: user?.userRole || '',
+            userMembershipStatus: user?.userMembershipStatus || '',
+            userToken: user?.userToken || '',
+          })
+        );
+      }
+    }
+  }, [membership]);
+
   // 로그아웃
   const handleLogout = () => {
     Cookies.remove('userToken');
@@ -54,6 +85,7 @@ const Header = () => {
 
   const loginStatus = loginUser ? (
     <>
+    {}
       <div className="headerUserName" onClick={() => router.push('/my_info')}>
         {name}님
       </div>

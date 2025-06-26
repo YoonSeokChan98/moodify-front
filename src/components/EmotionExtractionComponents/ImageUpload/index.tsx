@@ -19,6 +19,7 @@ const ImageUpload = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [step, setStep] = useState<'idle' | 'uploading' | 'analyzing' | 'done'>('idle');
+  const [emotions, setEmotions] = useState({});
 
   //upload props 설정
   const props: UploadProps = {
@@ -121,6 +122,16 @@ const ImageUpload = () => {
           .withFaceLandmarks()
           .withFaceExpressions();
         const newEmotions = newDetections[0].expressions;
+        const emotionData = {
+          angry: newEmotions.angry,
+          disgusted: newEmotions.disgusted,
+          fearful: newEmotions.fearful,
+          happy: newEmotions.happy,
+          neutral: newEmotions.neutral,
+          sad: newEmotions.sad,
+          surprised: newEmotions.surprised,
+        };
+        setEmotions(emotionData);
         dispatch(
           updateEmotion({
             angry: newEmotions.angry,
@@ -174,8 +185,8 @@ const ImageUpload = () => {
             </>
           )}
         </div>
-        <UserEmotionChart />
-        <div className='writeBoardBtn'>
+        <UserEmotionChart emotions={emotions} />
+        <div className="writeBoardBtn">
           <Button onClick={() => onClickEmotionDiary()}>감정일기 작성하기</Button>
         </div>
       </div>

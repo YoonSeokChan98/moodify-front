@@ -26,9 +26,14 @@ export interface UserStateType {
     userName: string;
     userEmail: string;
     userRole: string;
+    userMembershipStatus: any;
     userToken: string;
-    userMembershipStatus: string;
   } | null;
+}
+interface MembershipInfo {
+  membershipName: 'basic' | 'premium';
+  startDate: string;
+  endDate: string;
 }
 
 // user
@@ -38,7 +43,16 @@ export interface UserType {
   userEmail: string;
   userRole: string;
   userToken: string;
-  userMembershipStatus: string;
+  userMembershipStatus: any;
+  // {
+  //   id: number;
+  //   membershipName: string;
+  //   startDate: string;
+  //   endDate: string;
+  //   status: string;
+  //   userId: string;
+  //   paymentId: string;
+  // };
 }
 
 // 이미지 url
@@ -117,4 +131,12 @@ export interface BoardData {
     createdAt: string;
   };
   user: any;
+}
+
+// 결제 타입
+export interface PaymentTypes {
+  userId: Number | undefined;
+  paymentKey: string;
+  orderId: string;
+  amount: number;
 }

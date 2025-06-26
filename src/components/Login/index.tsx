@@ -31,6 +31,7 @@ const Login = () => {
       if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.userEmail)) {
         errors.userEmail = '유효하지 않는 이메일 주소입니다.';
       }
+
       return errors;
     },
     onSubmit: async (values) => {
@@ -51,14 +52,22 @@ const Login = () => {
             sameSite: 'Strict', // CSRF 공격 방지
             path: '/', // 쿠키의 유효 경로
           });
-
+          const membershipStatus = {
+            id: null,
+            membershipName: 'basic',
+            startDate: null,
+            endDate: null,
+            status: null,
+            userId: null,
+            paymentId: null,
+          };
           dispatch(
             loginSuccess({
               userId: response.data.id,
               userName: response.data.name,
               userEmail: response.data.email,
               userRole: response.data.role,
-              userMembershipStatus: response.data.membershipStatus,
+              userMembershipStatus: response.data.membershipStatus || membershipStatus,
               userToken: response.token,
             })
           );

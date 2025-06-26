@@ -64,6 +64,10 @@ export const BoardDetailStyled = styled.div`
         border-radius: 8px;
       }
     }
+    .reactQuill{
+      height: 500px;
+      margin-bottom: 70px;
+    }
 
     .visibilityBox {
       display: flex;
