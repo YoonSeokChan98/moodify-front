@@ -1,4 +1,4 @@
-import { UserStateType } from '@/types';
+import { MembershipInfo, NewMembership, UserStateType } from '@/types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState: UserStateType = {
@@ -8,7 +8,7 @@ const initialState: UserStateType = {
     userName: '',
     userEmail: '',
     userRole: '',
-    userMembershipStatus: '',
+    userMembershipStatus: null as NewMembership | null,
     userToken: '',
   },
 };
@@ -20,11 +20,11 @@ export const userSlice = createSlice({
     loginSuccess: (
       state,
       action: PayloadAction<{
-        userId: Number;
+        userId: number;
         userName: string;
         userEmail: string;
         userRole: string;
-        userMembershipStatus: any;
+        userMembershipStatus: MembershipInfo | null;
         userToken: string;
       }>
     ) => {
@@ -38,7 +38,7 @@ export const userSlice = createSlice({
         userName: '',
         userEmail: '',
         userRole: '',
-        userMembershipStatus: '',
+        userMembershipStatus: null,
         userToken: '',
       };
     },

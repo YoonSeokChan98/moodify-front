@@ -1,4 +1,4 @@
-import { EditUserInfo, LoginType, SignupType, UserType } from '@/types';
+import { EditUserInfo, LoginType, SignupType } from '@/types';
 import axios from 'axios';
 
 const BACK_URL = 'http://localhost:4000';

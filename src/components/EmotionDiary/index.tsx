@@ -1,23 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, useEffect, useMemo, useState } from 'react';
 import { EmotionDiaryStyled } from './styled';
 import { AppDispatch, store } from '@/redux/store';
 import { Button, Input, Switch } from 'antd';
 import { useFormik } from 'formik';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { removeEmotions } from '@/redux/slices/emotionSlices';
+import { NewEmotionDiaryType } from '@/types';
 
 // 에디터 관련
-import dynamic from 'next/dynamic';
+const QuillComponent = lazy(async () => await import('react-quill'));
 import { Quill } from 'react-quill';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
-// @ts-ignore
+// @ts-expect-error: 이미지 사이즈 조절하는건데 에러 원인을 모름 패스시킴
 import ImageResize from 'quill-image-resize';
 Quill.register('modules/ImageResize', ImageResize);
 
 // api
 import { apiPostUploadImageFile, apiPostWriteBoard } from '@/pages/api/boardApi';
-import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
-import { removeEmotions } from '@/redux/slices/emotionSlices';
+
+
+// 감정 타입 정의
+type EmotionType = 'happy' | 'sad' | 'angry' | 'neutral' | 'surprised' | 'disgusted' | 'fearful';
 
 const EmotionDiary = () => {
   const router = useRouter();
@@ -27,39 +31,42 @@ const EmotionDiary = () => {
   const getReduxEmotion = store.getState().emotions.emotions as Record<string, number | undefined> | undefined;
 
   const [question, setQuestion] = useState<string>('');
-  const emotionQuestions: Record<string, string[]> = {
-    happy: [
-      '오늘 기쁘게 만든 일이 무엇인가요?',
-      '행복함을 주변에 어떻게 표현하나요?',
-      '기쁨을 더 오래 느끼기 위해 어떤 노력을 하고 있나요?',
-    ],
-    sad: [
-      '오늘 슬펐던 경험이 있었다면 무엇인가요?',
-      '이 슬픈 감정을 어떻게 해소하려고 하나요?',
-      '누군가에게 털어놓고 싶은 일이 있나요?',
-    ],
-    angry: [
-      '오늘 화가 났던 이유를 기억하고 있나요?',
-      '분노를 느낄 때 어떻게 대처하나요?',
-      '마음을 가라앉히기 위해 어떤 행동을 했나요?',
-    ],
-    neutral: ['오늘은 평소와 다름없이 보냈나요?', '마음이 평안할 때 드는 생각은?', '특별히 신경 쓰이는 일이 있나요?'],
-    surprised: [
-      '오늘 놀라웠던 일은 무엇이 있었나요?',
-      '놀란 기억이 인상 깊게 남았나요?',
-      '예상치 못한 사건이 오늘 기분에 영향을 주었나요?',
-    ],
-    disgusted: [
-      '오늘 불쾌했던 경험이 있었나요?',
-      '이 기분을 해소하기 위해 무엇을 했나요?',
-      '누구나 겪을 수 있는 일이었나요?',
-    ],
-    fearful: [
-      '오늘 걱정이나 두려움이 있었나요?',
-      '이 불안한 마음을 어떻게 다스렸나요?',
-      '누군가에게 이야기하고 싶은 두려움이 있나요?',
-    ],
-  };
+  const emotionQuestions = useMemo(
+    (): Record<EmotionType, string[]> => ({
+      happy: [
+        '오늘 기쁘게 만든 일이 무엇인가요?',
+        '행복함을 주변에 어떻게 표현하나요?',
+        '기쁨을 더 오래 느끼기 위해 어떤 노력을 하고 있나요?',
+      ],
+      sad: [
+        '오늘 슬펐던 경험이 있었다면 무엇인가요?',
+        '이 슬픈 감정을 어떻게 해소하려고 하나요?',
+        '누군가에게 털어놓고 싶은 일이 있나요?',
+      ],
+      angry: [
+        '오늘 화가 났던 이유를 기억하고 있나요?',
+        '분노를 느낄 때 어떻게 대처하나요?',
+        '마음을 가라앉히기 위해 어떤 행동을 했나요?',
+      ],
+      neutral: ['오늘은 평소와 다름없이 보냈나요?', '마음이 평안할 때 드는 생각은?', '특별히 신경 쓰이는 일이 있나요?'],
+      surprised: [
+        '오늘 놀라웠던 일은 무엇이 있었나요?',
+        '놀란 기억이 인상 깊게 남았나요?',
+        '예상치 못한 사건이 오늘 기분에 영향을 주었나요?',
+      ],
+      disgusted: [
+        '오늘 불쾌했던 경험이 있었나요?',
+        '이 기분을 해소하기 위해 무엇을 했나요?',
+        '누구나 겪을 수 있는 일이었나요?',
+      ],
+      fearful: [
+        '오늘 걱정이나 두려움이 있었나요?',
+        '이 불안한 마음을 어떻게 다스렸나요?',
+        '누군가에게 이야기하고 싶은 두려움이 있나요?',
+      ],
+    }),
+    []
+  );
 
   // 감정에 따른 질문 추출
   useEffect(() => {
@@ -70,7 +77,7 @@ const EmotionDiary = () => {
     }
     let maxKey = '';
     let maxValue = -Infinity; // 모든 값이 음수일 가능성을 위해 -Infinity
-    for (let key in getReduxEmotion) {
+    for (const key in getReduxEmotion) {
       const v = getReduxEmotion[key] ?? 0;
       if (v > maxValue) {
         maxKey = key;
@@ -79,14 +86,21 @@ const EmotionDiary = () => {
     }
     setHighEmotion({ key: maxKey, value: maxValue });
   }, [getReduxEmotion]);
+
   useEffect(() => {
-    if (highEmotion.key && emotionQuestions[highEmotion.key]) {
-      const randomNumFloor = Math.floor(Math.random() * emotionQuestions[highEmotion.key].length);
-      setQuestion(emotionQuestions[highEmotion.key][Number(randomNumFloor)]);
+    // 타입 가드를 사용하여 안전하게 접근
+    const isValidEmotionKey = (key: string): key is EmotionType => {
+      return key in emotionQuestions;
+    };
+
+    if (highEmotion.key && isValidEmotionKey(highEmotion.key)) {
+      const questions = emotionQuestions[highEmotion.key];
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      setQuestion(questions[randomIndex]);
     } else {
       setQuestion('');
     }
-  }, [highEmotion]);
+  }, [highEmotion, emotionQuestions]);
 
   // 폼 관리
   const formInitialValues = {
@@ -153,7 +167,7 @@ const EmotionDiary = () => {
               alert('서버에 이미지 업로드를 실패했습니다.');
             }
           } catch (error) {
-            console.error(`이미지 ${i + 1} 변환 오류:`);
+            console.error(`이미지 ${i + 1} 변환 오류: ${error}`);
             continue;
           }
         }
@@ -170,7 +184,7 @@ const EmotionDiary = () => {
           visibilityStatus = 'private';
         }
 
-        const newEmotionDiary = {
+        const newEmotionDiary: NewEmotionDiaryType = {
           visibilityStatus: visibilityStatus,
           userEmotion: userEmotion,
           userId: userId,
@@ -190,6 +204,7 @@ const EmotionDiary = () => {
   });
 
   const modules = useMemo(() => {
+    if (!Quill) return {};
     return {
       toolbar: [
         [{ font: [] }],
@@ -204,7 +219,7 @@ const EmotionDiary = () => {
         parchment: Quill.import('parchment'),
       },
     };
-  }, []);
+  }, [Quill]);
 
   return (
     <EmotionDiaryStyled>
@@ -223,7 +238,7 @@ const EmotionDiary = () => {
               />
             </div>
             <div className="contentBox">
-              <ReactQuill
+              <QuillComponent
                 placeholder="오늘 하루를 기록해 보세요"
                 theme="snow"
                 modules={modules}
@@ -254,6 +269,3 @@ const EmotionDiary = () => {
 };
 
 export default EmotionDiary;
-
-// https://velog.io/@khy226/Next.js-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90-React-Quill%ED%85%8D%EC%8A%A4%ED%8A%B8-%EC%97%90%EB%94%94%ED%84%B0-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0
-// https://make-somthing.tistory.com/24

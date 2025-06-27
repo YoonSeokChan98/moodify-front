@@ -1,4 +1,3 @@
-import { websiteTitle } from '@/assets';
 import { MainStyled } from './styled';
 import BoardList from '@/components/BoardComponent/BoardList';
 import MainTitle from '@/components/MainTitle';

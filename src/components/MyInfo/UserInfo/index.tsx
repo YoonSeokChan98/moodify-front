@@ -1,4 +1,4 @@
-import { store } from '@/redux/store';
+
 import { UserInfoStyled } from './styled';
 import { Button } from 'antd';
 import { useRouter } from 'next/router';
@@ -12,12 +12,12 @@ const UserInfo = ({ user }: UserInfoProps) => {
   const router = useRouter();
   const userName = user?.userName;
   const userMembershipStatus = user?.userMembershipStatus;
-  const membershipName = userMembershipStatus.membershipName
+  const membershipName = userMembershipStatus?.membershipName
   const userId = user?.userId;
 
-  const handleUpdateMyInfo = () => {
-    alert('개발 중');
-  };
+  // const handleUpdateMyInfo = () => {
+  //   alert('개발 중');
+  // };
 
   return (
     <UserInfoStyled>

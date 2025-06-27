@@ -4,10 +4,10 @@ import { apiGetAllBoard } from '@/pages/api/boardApi';
 import BoardCard from '../BoardCard';
 import { useRouter } from 'next/router';
 import { Button } from 'antd';
+import { Board } from '@/types';
 
 const BoardList = () => {
-  const [posts, setPosts] = useState([]);
-  // console.log('🚀 ~ BoardList ~ posts:', posts);
+  const [posts, setPosts] = useState<Board[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const BoardList = () => {
     };
     getAllBoard();
   }, []);
-  const popularPosts = posts.slice().sort((a: any, b: any) => b.liked_boards.length - a.liked_boards.length);
+  const popularPosts = posts.slice().sort((a, b) => b.liked_boards.length - a.liked_boards.length);
 
   return (
     <BoardListStyled>

@@ -3,14 +3,14 @@ import UserInfo from './UserInfo';
 import { MyInfoStyled } from './styled';
 
 import { useEffect, useState } from 'react';
-import { EmotionData } from '@/types';
+import { Board, Emotion } from '@/types';
 import { store } from '@/redux/store';
 import { apiGetAllUserBoard } from '@/pages/api/boardApi';
 import UserBoardList from './UserBoardList';
 
 const MyInfo = () => {
   const [boards, setBoards] = useState([]);
-  const [emotions, setEmotions] = useState<EmotionData[]>([]);
+  const [emotions, setEmotions] = useState<Emotion[]>([]);
   const user = store.getState().user.userInfo;
   const userId = user?.userId;
 
@@ -18,7 +18,7 @@ const MyInfo = () => {
     const getAllBoards = async () => {
       try {
         const response = await apiGetAllUserBoard(Number(userId));
-        const extractedBoards = response.data.map((x: any) => x);
+        const extractedBoards = response.data.map((x: Board) => x);
         setBoards(extractedBoards);
       } catch (error) {
         console.error('게시글 전체 가져오기 실패', error);
@@ -30,10 +30,10 @@ const MyInfo = () => {
   useEffect(() => {
     const getAllEmotions = () => {
       try {
-        const extractedEmotions = boards.map((data: any) => data.emotion);
+        const extractedEmotions = boards.map((data: Board) => data.emotion);
         setEmotions(
           extractedEmotions.map(
-            ({ neutral, happy, sad, angry, fearful, disgusted, surprised, createdAt }: EmotionData) => ({
+            ({ neutral, happy, sad, angry, fearful, disgusted, surprised, createdAt }: Emotion) => ({
               neutral,
               happy,
               sad,

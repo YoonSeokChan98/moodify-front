@@ -4,7 +4,7 @@ import { UserEditPasswordStyled } from './styled';
 import { ValidateType } from '@/types';
 import { apiPatchUpdatePassword } from '@/pages/api/userApi';
 import { toast } from 'react-toastify';
-import { Button, Input } from 'antd';
+import { Button } from 'antd';
 import Password from 'antd/es/input/Password';
 import { websiteTitle } from '@/assets';
 

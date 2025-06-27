@@ -116,7 +116,7 @@ const PaymentSuccess = () => {
       }
     };
     handleMembership();
-  }, [amount, orderId, paymentKey, paymentType]);
+  }, [amount, orderId, paymentKey, paymentType, dispatch, user]);
 
   return (
     <PaymentSuccessStyled>

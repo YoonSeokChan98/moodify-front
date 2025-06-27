@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // 회원가입 / 로그인 검증
 export interface ValidateType {
   userEmail?: string;
@@ -22,23 +23,37 @@ export interface LoginType {
 export interface UserStateType {
   isLoggedIn: boolean;
   userInfo: {
-    userId: Number;
+    userId: number;
     userName: string;
     userEmail: string;
     userRole: string;
-    userMembershipStatus: any;
+    userMembershipStatus: MembershipInfo | null;
     userToken: string;
   } | null;
 }
-interface MembershipInfo {
-  membershipName: 'basic' | 'premium';
-  startDate: string;
-  endDate: string;
+export interface MembershipInfo {
+  id: string | null;
+  membershipName: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  status: string | null;
+  userId: string | null;
+  paymentId: string | null;
+}
+
+export interface NewMembership {
+  id: string | null;
+  membershipName: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  status: string | null;
+  userId: string | null;
+  paymentId: string | null;
 }
 
 // user
 export interface UserType {
-  userId: Number;
+  userId: number;
   userName: string;
   userEmail: string;
   userRole: string;
@@ -84,7 +99,7 @@ export interface EmotionDiaryType {
     sad?: number;
     surprised?: number;
   } | null;
-  userId: Number | null | undefined;
+  userId: number | null | undefined;
 }
 
 export interface getReduxEmotionType {
@@ -93,6 +108,7 @@ export interface getReduxEmotionType {
 
 // 감정데이터
 export interface EmotionData {
+  id: number;
   neutral: number;
   happy: number;
   sad: number;
@@ -105,7 +121,7 @@ export interface EmotionData {
 
 // 유저 정보 수정
 export interface EditUserInfo {
-  userId: Number | undefined;
+  userId: number | undefined;
   userName: string;
   userEmail: string;
 }
@@ -135,8 +151,98 @@ export interface BoardData {
 
 // 결제 타입
 export interface PaymentTypes {
-  userId: Number | undefined;
+  userId: number | undefined;
   paymentKey: string;
   orderId: string;
   amount: number;
+}
+
+// Emotion 타입 정의
+export interface Emotion {
+  angry: number;
+  disgusted: number;
+  fearful: number;
+  happy: number;
+  neutral: number;
+  sad: number;
+  surprised: number;
+  createdAt: string;
+}
+
+// User 타입 정의
+interface User {
+  createdAt: string;
+  id: number;
+  updatedAt: string;
+  userEmail: string;
+  userName: string;
+  userPassword: string;
+  userRole: string;
+  userStatus: string;
+}
+
+// Board 타입 정의
+export interface Board {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  emotion: Emotion;
+  boardId: number;
+  userId: number;
+  question: string;
+  visibilityStatus: string;
+  removeStatus: boolean;
+  liked_boards: any[]; // 좋아요 목록 (배열로 처리)
+  user: User; // User 정보 포함
+}
+
+export interface Liked_boardsType {
+  id: number; // 고유 ID
+  userId: number; // 좋아요를 누른 사용자 ID
+  boardId: number; // 좋아요가 눌린 게시글 ID
+  createdAt: string; // 생성일
+  updatedAt: string; // 수정일
+}
+
+interface NewEmotion {
+  angry?: number | undefined;
+  disgusted?: number | undefined;
+  fearful?: number | undefined;
+  happy?: number | undefined;
+  neutral?: number | undefined;
+  sad?: number | undefined;
+  surprised?: number | undefined;
+}
+
+export interface NewEmotionDiaryType {
+  visibilityStatus: string;
+  userEmotion: NewEmotion | null;
+  userId: number | undefined;
+  question: string;
+  title: string;
+  content: string;
+}
+
+export interface EmotionQuestionsType {
+  angry: string[];
+  disgusted: string[];
+  fearful: string[];
+  happy: string[];
+  neutral: string[];
+  sad: string[];
+  surprised: string[];
+}
+
+export interface UpdateBoardDataType {
+  boardId: number;
+  visibilityStatus: string;
+  title: string;
+  content: string;
+  question: string;
+}
+
+export interface UserEmotionChartType {
+  emotions: any;
 }

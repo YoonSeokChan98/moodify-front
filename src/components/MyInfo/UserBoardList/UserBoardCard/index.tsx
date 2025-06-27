@@ -3,10 +3,10 @@ import { UserBoardCardStyled } from './styled';
 import { useEffect, useState } from 'react';
 import { store } from '@/redux/store';
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
+import { Board } from '@/types';
 
-const UserBoardCard = ({ item }: { item: any }) => {
+const UserBoardCard = ({ item }: { item: Board }) => {
   const post = item;
-  // console.log('🚀 ~ UserBoardCard ~ post:', post);
   const router = useRouter();
   const [likeNumber, setLikeNumber] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
@@ -14,10 +14,10 @@ const UserBoardCard = ({ item }: { item: any }) => {
 
   useEffect(() => {
     setLikeNumber(post.liked_boards.length);
-    const likedUserNumberAry = post.liked_boards.map((value: any) => value.userId);
+    const likedUserNumberAry = post.liked_boards.map((value) => value.userId);
     const isLikedStatus = likedUserNumberAry.filter((value: number) => value === userPid);
     if (isLikedStatus.length > 0) setIsLiked(true);
-  }, [post]);
+  }, [post, userPid]);
   return (
     <UserBoardCardStyled>
       <div className="boardCardWrap" onClick={() => router.push(`/board_detail/${post.id}`)}>

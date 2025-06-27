@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { FaceDetectionStyled } from './styled';
 import * as faceApi from 'face-api.js';
-import { ImageType } from '@/types';
 
-const FaceDetection = ({ imageSrc }: ImageType) => {
+
+const FaceDetection = () => {
   const [loading, setLoading] = useState(false);
-  const [emotionData, setEmotionData] = useState(null);
+
   useEffect(() => {
     setLoading(true);
     const loadModels = async () => {
@@ -24,6 +24,7 @@ const FaceDetection = ({ imageSrc }: ImageType) => {
         setLoading(false);
       }
     };
+    loadModels()
   }, []);
 
   return (

@@ -4,12 +4,13 @@ import { apiGetAllBoard } from '@/pages/api/boardApi';
 import { useRouter } from 'next/router';
 import BoardCard from '../BoardCard';
 import PaginationComponent from '@/components/PaginationComponent';
+import { Board } from '@/types';
 
 const AllBoardList = () => {
   const router = useRouter();
   const urlPathname = router.pathname;
-  const [postType, setPostType] = useState(true);
-  const [posts, setPosts] = useState([]);
+  const [postType, setPostType] = useState<boolean>(true);
+  const [posts, setPosts] = useState<Board[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const page = parseInt((router.query.page as string) || '1', 10);
   const itemsPerPage = 8;
@@ -27,18 +28,18 @@ const AllBoardList = () => {
       setTotalItems(filteredPosts.length);
     };
     getAllBoard();
-    urlPathname === '/all_board_list' && setPostType(true);
-    urlPathname === '/all_popular_board_list' && setPostType(false);
-  }, []);
+    if (urlPathname === '/all_board_list') setPostType(true);
+    if (urlPathname === '/all_popular_board_list') setPostType(false);
+  }, [urlPathname]);
 
   // 현재 페이지에 표시할 게시글들을 계산
-  const getCurrentPagePosts = (allPosts: any[]) => {
+  const getCurrentPagePosts = (allPosts: Board[]) => {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return allPosts.slice(startIndex, endIndex);
   };
 
-  const popularPosts = posts.slice().sort((a: any, b: any) => b.liked_boards.length - a.liked_boards.length);
+  const popularPosts = posts.slice().sort((a, b) => b.liked_boards.length - a.liked_boards.length);
 
   // 현재 페이지에 표시할 게시글들
   const currentPosts = postType ? getCurrentPagePosts(posts) : getCurrentPagePosts(popularPosts);

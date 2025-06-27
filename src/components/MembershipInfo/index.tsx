@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { apiDeleteRemoveMembership } from '@/pages/api/membershipApi';
 import { loginSuccess } from '@/redux/slices/userSlices';
 import { useDispatch } from 'react-redux';
+import { NewMembership } from '@/types';
 
 const MembershipInfo = () => {
   const router = useRouter();
@@ -18,17 +19,13 @@ const MembershipInfo = () => {
   const membership = user?.userMembershipStatus?.membershipName;
   useEffect(() => {
     if (membership === 'premium') setMembershipStatus(true);
-  }, [user]);
-
-  const handelClick = () => {
-    alert('개발중');
-  };
+  }, [user, membership]);
 
   const handelRemoveMembership = async () => {
     try {
       const response = await apiDeleteRemoveMembership(userId);
       if (response.result === true) {
-        const newMembership = {
+        const newMembership: NewMembership = {
           id: null,
           membershipName: 'basic',
           startDate: null,

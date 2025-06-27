@@ -5,6 +5,7 @@ import { store } from '@/redux/store';
 import { apiGetMyAllBoard } from '@/pages/api/boardApi';
 import BoardCard from '@/components/BoardComponent/BoardCard';
 import PaginationComponent from '@/components/PaginationComponent';
+import { Board } from '@/types';
 
 const UserAllBoardList = () => {
   const router = useRouter();
@@ -29,9 +30,9 @@ const UserAllBoardList = () => {
       }
     };
     getMyAllBoard();
-  }, []);
+  }, [userId]);
   // 현재 페이지에 표시할 게시글들을 계산
-  const getCurrentPagePosts = (allPosts: any[]) => {
+  const getCurrentPagePosts = (allPosts: Board[]) => {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return allPosts.slice(startIndex, endIndex);

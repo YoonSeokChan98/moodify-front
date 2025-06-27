@@ -20,9 +20,10 @@ import dynamic from 'next/dynamic';
 import { Quill } from 'react-quill';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
-// @ts-ignore
+// @ts-expect-error: 이미지 사이즈 조절하는건데 에러 원인을 모름 패스시킴
 import ImageResize from 'quill-image-resize';
 import UserEmotionChart from '@/components/EmotionExtractionComponents/UserEmotionChart';
+import { Board, UpdateBoardDataType } from '@/types';
 Quill.register('modules/ImageResize', ImageResize);
 
 const BoardDetail = () => {
@@ -30,7 +31,7 @@ const BoardDetail = () => {
   const { id } = router.query;
   const [question, setQuestion] = useState('');
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState<any>('');
+  const [content, setContent] = useState('');
   const [date, setDate] = useState('');
   const [visibility, setVisibility] = useState(false);
   const [emotionUserPid, setEmotionUserPid] = useState('');
@@ -54,7 +55,8 @@ const BoardDetail = () => {
             setTitle(boardData.data.title);
             setContent(boardData.data.content);
             setDate(boardData.data.createdAt);
-            boardData.data.visibilityStatus === 'public' ? setVisibility(true) : setVisibility(false);
+            if (boardData.data.visibilityStatus === 'public') setVisibility(true);
+            if (boardData.data.visibilityStatus === 'basic') setVisibility(false);
             setEmotionUserPid(boardData.data.userId);
             setUserName(boardData.data.user.userName);
             setLikeNumber(boardData.data.liked_boards.length);
@@ -69,7 +71,7 @@ const BoardDetail = () => {
             };
             setEmotions(emotionData);
 
-            const likedUserNumberAry = boardData.data.liked_boards.map((value: any) => value.userId);
+            const likedUserNumberAry = boardData.data.liked_boards.map((value: Board) => value.userId);
             const isLikedStatus = likedUserNumberAry.filter((value: number) => value === userPid);
             if (isLikedStatus.length > 0) setIsLiked(true);
           }
@@ -79,7 +81,7 @@ const BoardDetail = () => {
       }
     };
     getOneBoard();
-  }, [id, isLiked]);
+  }, [id, isLiked, userPid]);
 
   // 좋아요 버튼
   const handleLikedBtn = async () => {
@@ -186,7 +188,7 @@ const BoardDetail = () => {
               alert('서버에 이미지 업로드를 실패했습니다.');
             }
           } catch (error) {
-            console.error(`이미지 ${i + 1} 변환 오류:`);
+            console.error(`이미지 ${i + 1} 변환 오류: ${error}`);
             continue;
           }
         }
@@ -197,8 +199,8 @@ const BoardDetail = () => {
         } else {
           visibilityStatus = 'private';
         }
-        const updateBoardData = {
-          boardId: id,
+        const updateBoardData: UpdateBoardDataType = {
+          boardId: Number(id),
           visibilityStatus: visibilityStatus,
           title: title,
           content: finalContent,
@@ -269,7 +271,7 @@ const BoardDetail = () => {
               placeholder="오늘 하루를 기록해 보세요"
               theme="snow"
               modules={modules}
-              className='reactQuill'
+              className="reactQuill"
               id="content"
               onChange={(value: string) => {
                 updateBoardFormik.setFieldValue('content', value);

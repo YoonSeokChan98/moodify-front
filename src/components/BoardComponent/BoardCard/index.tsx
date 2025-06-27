@@ -1,11 +1,11 @@
-import { BoardData } from '@/types';
+import { Board } from '@/types';
 import { BoardCardStyled } from './styled';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { store } from '@/redux/store';
 
-const BoardCard = ({ item }: { item: BoardData }) => {
+const BoardCard = ({ item }: { item: Board }) => {
   const post = item;
   const router = useRouter();
   const [likeNumber, setLikeNumber] = useState(0);
@@ -15,10 +15,10 @@ const BoardCard = ({ item }: { item: BoardData }) => {
   useEffect(() => {
     setLikeNumber(post.liked_boards.length);
 
-    const likedUserNumberAry = post.liked_boards.map((value: any) => value.userId);
+    const likedUserNumberAry = post.liked_boards.map((value) => value.userId);
     const isLikedStatus = likedUserNumberAry.filter((value: number) => value === userPid);
     if (isLikedStatus.length > 0) setIsLiked(true);
-  }, [post]);
+  }, [post, userPid]);
 
   return (
     <BoardCardStyled>

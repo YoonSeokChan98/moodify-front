@@ -15,7 +15,7 @@ export const apiPostMembership = async (userId: number, membershipName: string, 
 };
 
 // 만료된 멤버십 삭제
-export const apiDeleteRemoveMembership = async (userId: Number | undefined) => {
+export const apiDeleteRemoveMembership = async (userId: number | undefined) => {
   try {
     const response = await axios.delete(`${API_URL}/remove-membership`, { params: { userId } });
     console.log('🚀 ~ apiDeleteRemoveMembership ~ response:', response);

@@ -7,20 +7,19 @@ import type { ChartData, ChartOptions } from 'chart.js';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 // 날짜 축을 사용하려면 필요함
 import 'chartjs-adapter-date-fns';
-import { EmotionData } from '@/types';
-import { useEffect, useState } from 'react';
+import { Emotion } from '@/types';
 import { store } from '@/redux/store';
 // 차트 기능 등록
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, TimeScale);
 
 interface UserEmotionChartProps {
-  emotions: EmotionData[];
+  emotions: Emotion[];
 }
 
 const UserEmotionChart = (props: UserEmotionChartProps) => {
   const { emotions } = props;
   const user = store.getState().user?.userInfo;
-  const membership = user?.userMembershipStatus.membershipName;
+  const membership = user?.userMembershipStatus?.membershipName;
 
   const formDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString('ko-KR', {

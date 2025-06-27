@@ -5,17 +5,17 @@ import type { UploadFile, UploadProps } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import * as faceApi from 'face-api.js';
 import UserEmotionChart from '../UserEmotionChart';
-import { EmotionType } from '@/types';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, store } from '@/redux/store';
 import { updateEmotion } from '@/redux/slices/emotionSlices';
+import Image from 'next/image';
 
 const ImageUpload = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const imageRef = useRef<HTMLImageElement | null>(null);
-  const [detections, setDetections] = useState<EmotionType | null>(null);
+  // const [detections, setDetections] = useState<EmotionType | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [step, setStep] = useState<'idle' | 'uploading' | 'analyzing' | 'done'>('idle');
@@ -56,7 +56,7 @@ const ImageUpload = () => {
     showUploadList: {
       extra: ({ size = 0 }) => <span style={{ color: '#cccccc' }}>({(size / 1024 / 1024).toFixed(2)}MB)</span>,
     },
-    beforeUpload(file: any) {
+    beforeUpload(file) {
       setStep('uploading');
       // antd upload로 만든 이미지 정보를 src를 만들기
       const objectUrl = URL.createObjectURL(file);
@@ -66,9 +66,9 @@ const ImageUpload = () => {
 
       return false;
     },
-    onRemove(file) {
+    onRemove() {
       setFileList([]);
-      setDetections(null);
+      // setDetections(null);
       setImageSrc(null);
       setStep('idle');
     },
@@ -80,7 +80,7 @@ const ImageUpload = () => {
     ) : (
       <>
         <div className="imageUploadImgBox">
-          <img className="imageUploadImg" ref={imageRef} src={imageSrc} alt="분석 이미지" />
+          <Image className="imageUploadImg" ref={imageRef} src={imageSrc} alt="분석 이미지" width={500} height={300} />
         </div>
       </>
     );
@@ -150,7 +150,7 @@ const ImageUpload = () => {
     };
 
     analyzeImage();
-  }, [imageSrc]);
+  }, [imageSrc, dispatch]);
 
   const emotion = store.getState().emotions.emotions;
   const onClickEmotionDiary = () => {

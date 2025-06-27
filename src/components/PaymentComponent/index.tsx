@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { PaymentComponentStyled } from './styled';
 import { loadPaymentWidget, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 import { store } from '@/redux/store';
-import { Button, Input } from 'antd';
+import { Button } from 'antd';
 import { nanoid } from 'nanoid';
 
 const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
@@ -15,7 +15,7 @@ const PaymentComponent = () => {
 
   const user = store.getState().user.userInfo;
 
-  const [price, setPrice] = useState(1000);
+  const price = 1000;
   const productName = 'premium';
   useEffect(() => {
     (async () => {
@@ -26,7 +26,7 @@ const PaymentComponent = () => {
       paymentWidgetRef.current = paymentWidget;
       paymentMethodsWidgetRef.current = paymentMethodsWidget;
     })();
-  }, []);
+  }, [price]);
 
   useEffect(() => {
     const paymentMethodsWidget = paymentMethodsWidgetRef.current;
@@ -54,12 +54,14 @@ const PaymentComponent = () => {
 
   return (
     <PaymentComponentStyled>
-    <div className="container">
-      <div className="title">결제창</div>
-      <div id="payment-widget" className="paymentWidget"></div>
-      <div id="agreement" className="agreementText"></div>
-      <Button className="paymentButton" onClick={handlePayment}>멤버십 가입하기</Button>
-    </div>
+      <div className="container">
+        <div className="title">결제창</div>
+        <div id="payment-widget" className="paymentWidget"></div>
+        <div id="agreement" className="agreementText"></div>
+        <Button className="paymentButton" onClick={handlePayment}>
+          멤버십 가입하기
+        </Button>
+      </div>
     </PaymentComponentStyled>
   );
 };

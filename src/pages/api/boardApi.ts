@@ -1,15 +1,15 @@
-import { UserType } from '@/types';
+import { NewEmotionDiaryType, UpdateBoardDataType } from '@/types';
 import axios from 'axios';
 
 const BACK_URL = 'http://localhost:4000';
 const API_URL = `${BACK_URL}/api/board`;
 
 // 이미지 업로드 api
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const apiPostUploadImageFile = async (formData: any) => {
   try {
-    console.log('test');
-
     const response = await axios.post(`${API_URL}/upload-image-folder`, formData);
+    console.log('🚀 ~ apiPostUploadImageFile ~ response:', response);
     return response.data;
   } catch (error) {
     console.error(`API 에러: ${error}`);
@@ -17,7 +17,7 @@ export const apiPostUploadImageFile = async (formData: any) => {
 };
 
 // 글 작성 api
-export const apiPostWriteBoard = async (newEmotionDiary: any) => {
+export const apiPostWriteBoard = async (newEmotionDiary: NewEmotionDiaryType) => {
   try {
     const response = await axios.post(`${API_URL}/write-board`, newEmotionDiary);
     return response.data;
@@ -37,7 +37,7 @@ export const apiGetAllBoard = async () => {
 };
 
 // 전체 게시글 가져오는 api
-export const apiGetAllUserBoard = async (userId: Number) => {
+export const apiGetAllUserBoard = async (userId: number) => {
   try {
     const response = await axios.get(`${API_URL}/get-all-user-board`, { params: { userId } });
     return response.data;
@@ -59,7 +59,7 @@ export const apiGetOneBoard = async (id: string | string[]) => {
 };
 
 // 게시글 수정
-export const apiPatchUpdateBoard = async (updateBoardData: any) => {
+export const apiPatchUpdateBoard = async (updateBoardData: UpdateBoardDataType) => {
   try {
     const response = await axios.patch(`${API_URL}/update-board`, updateBoardData);
     return response.data;
@@ -79,7 +79,7 @@ export const apiPatchRemoveBoard = async (id: string | string[] | undefined) => 
 };
 
 // 좋아요
-export const apiLikedBoardPlus = async (idData: { boardId: Number; userId: Number }) => {
+export const apiLikedBoardPlus = async (idData: { boardId: number; userId: number }) => {
   try {
     const response = await axios.post(`${API_URL}/liked-board-plus`, { idData });
     return response.data;
@@ -89,7 +89,7 @@ export const apiLikedBoardPlus = async (idData: { boardId: Number; userId: Numbe
 };
 
 // 좋아요 취소
-export const apiLikedBoardMinus = async (idData: { boardId: Number; userId: Number }) => {
+export const apiLikedBoardMinus = async (idData: { boardId: number; userId: number }) => {
   try {
     const response = await axios.post(`${API_URL}/liked-board-minus`, { idData });
     return response.data;
