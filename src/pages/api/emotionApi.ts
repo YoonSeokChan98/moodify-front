@@ -1,7 +1,10 @@
 import { EmotionDiaryType } from '@/types';
 import axios from 'axios';
+import dotenv from 'dotenv';
 
-const BACK_URL = 'http://localhost:4000';
+dotenv.config();
+
+const BACK_URL = process.env.NEXT_PUBLIC_BACK_URL;
 const API_URL = `${BACK_URL}/api/emotion`;
 
 // export const apiPostAddEmotion = async ({ userId, emotions }: EmotionDiaryType) => {

@@ -1,7 +1,10 @@
 import { NewEmotionDiaryType, UpdateBoardDataType } from '@/types';
 import axios from 'axios';
+import dotenv from 'dotenv';
 
-const BACK_URL = 'http://localhost:4000';
+dotenv.config();
+
+const BACK_URL = process.env.NEXT_PUBLIC_BACK_URL;
 const API_URL = `${BACK_URL}/api/board`;
 
 // 이미지 업로드 api
@@ -9,7 +12,6 @@ const API_URL = `${BACK_URL}/api/board`;
 export const apiPostUploadImageFile = async (formData: any) => {
   try {
     const response = await axios.post(`${API_URL}/upload-image-folder`, formData);
-    console.log('🚀 ~ apiPostUploadImageFile ~ response:', response);
     return response.data;
   } catch (error) {
     console.error(`API 에러: ${error}`);
@@ -30,6 +32,7 @@ export const apiPostWriteBoard = async (newEmotionDiary: NewEmotionDiaryType) =>
 export const apiGetAllBoard = async () => {
   try {
     const response = await axios.get(`${API_URL}/get-all-board`);
+    console.log("🚀 ~ apiGetAllBoard ~ response:", response)
     return response.data;
   } catch (error) {
     console.error(`API 에러: ${error}`);
